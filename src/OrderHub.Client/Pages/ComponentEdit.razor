@@ -1,0 +1,51 @@
+@page "/components/new"
+@page "/components/{id:guid}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+<PageTitle>@(_isNew ? "New component" : "Edit component") — OrderHub</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-5">
+        <h1 class="h3 mb-3">@(_isNew ? "New component" : "Edit component")</h1>
+
+        @if (_notFound)
+        {
+            <div class="alert alert-warning">This component no longer exists.</div>
+            <a class="btn btn-outline-secondary" href="components">Back to list</a>
+        }
+        else if (_loading)
+        {
+            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+        }
+        else
+        {
+            <EditForm Model="_form" OnValidSubmit="SaveAsync">
+                <DataAnnotationsValidator />
+                <div class="mb-3">
+                    <label class="form-label">Name <span class="text-danger">*</span></label>
+                    <InputText @bind-Value="_form.Name" class="form-control" maxlength="200" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <InputTextArea @bind-Value="_form.Description" class="form-control" rows="3" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Quantity (stock / reel count)</label>
+                    <InputNumber @bind-Value="_form.Quantity" class="form-control" min="0" required />
+                </div>
+
+                @if (_error is not null)
+                {
+                    <div class="alert alert-danger py-2">@_error</div>
+                }
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary" disabled="@_saving">
+                        @(_saving ? "Saving…" : "Save")
+                    </button>
+                    <a class="btn btn-outline-secondary" href="components">Cancel</a>
+                </div>
+            </EditForm>
+        }
+    </div>
+</div>

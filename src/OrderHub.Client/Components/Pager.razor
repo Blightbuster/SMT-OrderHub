@@ -1,0 +1,64 @@
+@namespace OrderHub.Client.Components
+<div class="d-flex align-items-center gap-3 mt-3">
+    <span class="text-muted small">@State.TotalCount item(s)</span>
+
+    <nav aria-label="Pagination">
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item @(State.HasPrevious ? "" : "disabled")">
+                <button class="page-link" @onclick="@(e => GoTo(State.Page - 1))"
+                        disabled="@(!State.HasPrevious)">«</button>
+            </li>
+            @if (State.VisiblePages.First() > 1)
+            {
+                <li class="page-item"><button class="page-link" @onclick="@(e => GoTo(1))">1</button></li>
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+            }
+            @foreach (var p in State.VisiblePages)
+            {
+                <li class="page-item @(p == State.Page ? "active" : "")">
+                    <button class="page-link" @onclick="@(e => GoTo(p))">@p</button>
+                </li>
+            }
+            @if (State.VisiblePages.Last() < State.TotalPages)
+            {
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+                <li class="page-item"><button class="page-link"
+                                                  @onclick="@(e => GoTo(State.TotalPages))">@State.TotalPages</button></li>
+                }
+                <li class="page-item @(State.HasNext ? "" : "disabled")">
+                    <button class="page-link" @onclick="@(e => GoTo(State.Page + 1))"
+                            disabled="@(!State.HasNext)">»</button>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="ms-auto d-flex align-items-center gap-1">
+            <label class="small text-muted" for="pageSize">Per page</label>
+            <select id="pageSize" class="form-select form-select-sm" style="width: 5rem;" value="@State.PageSize"
+                    @onchange="OnPageSizeChanged">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+        </div>
+    </div>
+
+@code {
+    [Parameter, EditorRequired] public PagerState State { get; set; } = null!;
+    [Parameter, EditorRequired] public EventCallback OnChanged { get; set; }
+
+    private async Task GoTo(int page)
+    {
+        if (page == State.Page || page < 1 || page > State.TotalPages) return;
+        State.Page = page;
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task OnPageSizeChanged(ChangeEventArgs e)
+    {
+        State.PageSize = int.Parse(e.Value?.ToString() ?? "10");
+        State.Reset();
+        await OnChanged.InvokeAsync();
+    }
+}
