@@ -45,6 +45,36 @@ public class ApiIntegrationTests : IDisposable
             });
 
         _client = _factory.CreateClient();
+        _client.DefaultRequestHeaders.Add("X-Requested-With", "OrderHub");
+        AuthenticateAsync().GetAwaiter().GetResult();
+    }
+
+    [Fact]
+    public async Task MutatingRequest_WithoutCsrfHeader_Returns403()
+    {
+        // Authenticated client WITHOUT the required custom header.
+        // (Authorization runs before the CSRF filter, so login is required to reach the 403.)
+        using var bareClient = _factory.CreateClient();
+        var userName = $"csrf-{Guid.NewGuid():N}@orderhub.test";
+        var password = "Smt!Passw0rd-42";
+        (await bareClient.PostAsJsonAsync("/register", new { email = userName, password })).EnsureSuccessStatusCode();
+        (await bareClient.PostAsJsonAsync("/login?useCookies=true", new { email = userName, password })).EnsureSuccessStatusCode();
+
+        var response = await bareClient.PostAsJsonAsync("/api/components",
+            new { name = "X", description = "", quantity = 1 });
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    private async Task AuthenticateAsync()
+    {
+        var userName = $"user-{Guid.NewGuid():N}@orderhub.test";
+        var password = "Smt!Passw0rd-42";
+
+        (await _client.PostAsJsonAsync("/register", new { email = userName, password }))
+            .EnsureSuccessStatusCode();
+        (await _client.PostAsJsonAsync("/login?useCookies=true", new { email = userName, password }))
+            .EnsureSuccessStatusCode();
     }
 
     // ---------- Components ----------
@@ -208,6 +238,40 @@ public class ApiIntegrationTests : IDisposable
             });
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    // ---------- Authentication ----------
+
+    [Fact]
+    public async Task EntityEndpoints_WithoutAuth_Return401()
+    {
+        // Fresh client without the auth cookie.
+        using var anonymousClient = _factory.CreateClient();
+        var response = await anonymousClient.GetAsync("/api/components");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task RegisterLogin_ThenCallEntityEndpoint_Succeeds()
+    {
+        var userName = $"user-{Guid.NewGuid():N}@orderhub.test";
+        var password = "Smt!Passw0rd-42";
+
+        // Register via built-in Identity endpoint.
+        var register = await _client.PostAsJsonAsync("/register", new { email = userName, password });
+        Assert.True(register.IsSuccessStatusCode, $"register failed: {register.StatusCode}");
+
+        // Login — Identity sets the auth cookie on the client's cookie container.
+        var login = await _client.PostAsJsonAsync("/login?useCookies=true", new { email = userName, password });
+        Assert.True(login.IsSuccessStatusCode, $"login failed: {login.StatusCode}");
+
+        // Authenticated call now succeeds.
+        var list = await _client.GetAsync("/api/components");
+        Assert.Equal(HttpStatusCode.OK, list.StatusCode);
+
+        var me = await _client.GetAsync("/manage/info");
+        Assert.Equal(HttpStatusCode.OK, me.StatusCode);
     }
 
     public void Dispose()

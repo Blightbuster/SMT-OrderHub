@@ -13,6 +13,43 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<SmtDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("SmtDatabase")));
 
+// Authentication: ASP.NET Core Identity with cookie auth (browser-friendly).
+builder.Services
+    .AddIdentityApiEndpoints<Microsoft.AspNetCore.Identity.IdentityUser>()
+    .AddEntityFrameworkStores<SmtDbContext>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.Name = "OrderHub.Auth";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None; // cross-origin WASM client
+    // Secure cookies in production; relaxed for local dev/test over plain HTTP.
+    options.Cookie.SecurePolicy = builder.Environment.IsProduction()
+        ? Microsoft.AspNetCore.Http.CookieSecurePolicy.Always
+        : Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest;
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+});
+
+builder.Services.AddAuthorization();
+
+// Rate limiting: protects the Identity auth endpoints (/register, /login, /logout)
+// from online brute-force. Applied per-IP via the "auth" policy only — no global limiter.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    // Strict partition for the auth endpoints (per IP).
+    options.AddPolicy("auth", httpContext =>
+        System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(
+            httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
+});
+
 // Repositories & application services.
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IBoardRepository, BoardRepository>();
@@ -20,7 +57,11 @@ builder.Services.AddScoped<IComponentRepository, ComponentRepository>();
 builder.Services.AddScoped<IOrderProductionService, OrderProductionService>();
 
 // API controllers with JSON options for the DTO contracts.
-builder.Services.AddControllers()
+builder.Services.AddControllers(options =>
+    {
+        // CSRF defense-in-depth: mutating requests must carry a custom header.
+        options.Filters.Add<OrderHub.Api.Security.RequireCsrfHeaderAttribute>();
+    })
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
@@ -52,6 +93,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRateLimiter();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Built-in Identity endpoints: /register, /login, /logout (cookie-based), rate-limited.
+app.MapIdentityApi<Microsoft.AspNetCore.Identity.IdentityUser>().RequireRateLimiting("auth");
 
 app.MapControllers();
 

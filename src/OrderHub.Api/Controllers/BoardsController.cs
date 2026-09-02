@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OrderHub.Application.Dtos;
@@ -8,6 +9,7 @@ namespace OrderHub.Api.Controllers;
 
 /// <summary>CRUD endpoints for boards.</summary>
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class BoardsController : ControllerBase
 {

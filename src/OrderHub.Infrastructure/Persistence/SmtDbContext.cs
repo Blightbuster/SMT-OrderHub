@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OrderHub.Domain;
 
@@ -6,9 +7,10 @@ namespace OrderHub.Infrastructure.Persistence;
 /// <summary>
 /// EF Core database context for the SMT OrderHub application.
 /// Maps the Order / Board / Component aggregate with explicit many-to-many
-/// join entities and optimistic concurrency (RowVersion) tokens.
+/// join entities, optimistic concurrency (RowVersion) tokens, and the
+/// ASP.NET Core Identity user store.
 /// </summary>
-public class SmtDbContext : DbContext
+public class SmtDbContext : IdentityDbContext
 {
     public SmtDbContext(DbContextOptions<SmtDbContext> options) : base(options)
     {

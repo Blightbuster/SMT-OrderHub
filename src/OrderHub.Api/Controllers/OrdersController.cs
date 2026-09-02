@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OrderHub.Application.Dtos;
@@ -9,6 +10,7 @@ namespace OrderHub.Api.Controllers;
 
 /// <summary>CRUD endpoints for orders plus the production-line export.</summary>
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class OrdersController : ControllerBase
 {

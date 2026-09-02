@@ -432,3 +432,4 @@ steps.md
 src/OrderHub.Api/orderhub.db
 src/OrderHub.Api/orderhub.db-wal
 src/OrderHub.Api/orderhub.db-shm
+.vscode/settings.json

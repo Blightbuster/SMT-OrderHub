@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OrderHub.Infrastructure.Persistence;
 
@@ -10,9 +11,11 @@ using OrderHub.Infrastructure.Persistence;
 namespace OrderHub.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SmtDbContext))]
-    partial class SmtDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260902191322_AddIdentityTables")]
+    partial class AddIdentityTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.0");
