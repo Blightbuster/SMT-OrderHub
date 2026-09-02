@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using OrderHub.Client;
 using OrderHub.Client.ApiClient;
 using OrderHub.Client.Auth;
+using OrderHub.Client.RealTime;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -25,5 +26,8 @@ builder.Services.AddScoped<IOrderHubApiClient, OrderHubApiClient>();
 // Authentication state backed by the API cookie session.
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthStateProvider>();
+
+// Real-time concurrency notifications (one shared auto-reconnecting connection).
+builder.Services.AddSingleton<IOrderHubClient, OrderHubClient>();
 
 await builder.Build().RunAsync();

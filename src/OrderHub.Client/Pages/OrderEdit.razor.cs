@@ -1,18 +1,24 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 using OrderHub.Client.ApiClient;
 using OrderHub.Client.Components;
+using OrderHub.Client.RealTime;
 
 namespace OrderHub.Client.Pages;
 
 /// <summary>
 /// Create / edit form for an order, including board assignments
 /// (BoardQuantity per board) via the reusable AssignmentList.
+/// While editing an existing order, subscribes to the SignalR watch channel:
+/// when another user saves changes, a non-blocking conflict banner appears
+/// offering "Discard & Reload" or a "Side-by-Side Review".
 /// </summary>
-public partial class OrderEdit : ComponentBase
+public partial class OrderEdit : ComponentBase, IDisposable
 {
     [Inject] private IOrderHubApiClient Api { get; set; } = null!;
     [Inject] private NavigationManager Navigation { get; set; } = null!;
+    [Inject] private IOrderHubClient OrderHub { get; set; } = null!;
 
     [Parameter] public Guid? Id { get; set; }
 
@@ -26,6 +32,19 @@ public partial class OrderEdit : ComponentBase
     private Form _form = new();
     private List<AssignmentRow> _boardAssignments = [];
     private List<AvailableOption> _availableBoards = [];
+
+    // Real-time conflict state.
+    private OrderModifiedEvent? _conflict;
+    private bool _reviewing;
+    private OrderDetailDto? _conflictState;
+
+    private string _conflictBoardSummary =>
+        _boardAssignments.Count == 0 ? "—" : string.Join(", ", _boardAssignments.Select(r => $"{r.Label} ×{r.Count}"));
+
+    private string? _conflictStateSummary =>
+        _conflictState is null || _conflictState.Boards.Count == 0
+            ? "—"
+            : string.Join(", ", _conflictState.Boards.Select(b => $"{b.BoardName} ×{b.BoardQuantity}"));
 
     private sealed class Form
     {
@@ -66,6 +85,16 @@ public partial class OrderEdit : ComponentBase
                     Count = ba.BoardQuantity
                 })
                 .ToList();
+
+            // Subscribe to real-time modifications of THIS order.
+            await OrderHub.StartAsync();
+            OrderHub.Connection.Remove("OrderModifiedByAnotherUser");
+            OrderHub.Connection.On<OrderModifiedEvent>("OrderModifiedByAnotherUser", (evt) =>
+            {
+                _ = HandleConflictAsync(evt);
+                return Task.CompletedTask;
+            });
+            await OrderHub.WatchOrderAsync(Id.Value);
         }
         catch (Exception ex)
         {
@@ -75,6 +104,61 @@ public partial class OrderEdit : ComponentBase
         {
             _loading = false;
         }
+    }
+
+    private void DismissConflict() => _conflict = null;
+
+    private async Task HandleConflictAsync(OrderModifiedEvent evt)
+    {
+        if (evt.OrderId != Id.Value) return;
+        _conflict = evt;
+        try
+        {
+            _conflictState = await Api.Orders.GetByIdAsync(Id.Value);
+        }
+        catch
+        {
+            _conflictState = null;
+        }
+        _reviewing = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task DiscardAndReloadAsync()
+    {
+        _conflict = null;
+        _reviewing = false;
+        _loading = true;
+        try
+        {
+            var order = await Api.Orders.GetByIdAsync(Id!.Value);
+            if (order is null)
+            {
+                _notFound = true;
+                return;
+            }
+            _rowVersion = order.RowVersion;
+            _form = new Form { Name = order.Name, Description = order.Description };
+            _boardAssignments = order.Boards
+                .Select(ba => new AssignmentRow { ItemId = ba.BoardId, Label = ba.BoardName, Count = ba.BoardQuantity })
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task OverwriteAnywayAsync()
+    {
+        // Re-apply our form state on top of the latest RowVersion.
+        if (_conflictState is null) return;
+        _rowVersion = _conflictState.RowVersion;
+        await SaveAsync();
     }
 
     private Task StateChangedAsync() => Task.CompletedTask;
@@ -112,6 +196,14 @@ public partial class OrderEdit : ComponentBase
         finally
         {
             _saving = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (Id is not null)
+        {
+            _ = OrderHub.UnwatchOrderAsync(Id.Value);
         }
     }
 }
