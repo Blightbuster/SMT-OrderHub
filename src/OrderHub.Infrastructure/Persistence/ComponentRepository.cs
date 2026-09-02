@@ -58,4 +58,9 @@ public class ComponentRepository : IComponentRepository
         _context.Components.Remove(component);
         return Task.CompletedTask;
     }
+
+    public void MarkModified(Component component, Guid originalRowVersion)
+    {
+        _context.Entry(component).Property(c => c.RowVersion).OriginalValue = originalRowVersion;
+    }
 }

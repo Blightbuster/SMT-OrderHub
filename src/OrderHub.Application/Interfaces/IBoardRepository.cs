@@ -14,4 +14,13 @@ public interface IBoardRepository
     Task AddAsync(Board board, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
     Task DeleteAsync(Board board, CancellationToken cancellationToken = default);
+
+    /// <summary>Checks whether all board ids exist (for reference validation).</summary>
+    Task<bool> AllExistAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Registers the entity as modified with the client-supplied RowVersion as the
+    /// original value, enabling the optimistic concurrency check on save.
+    /// </summary>
+    void MarkModified(Board board, Guid originalRowVersion);
 }

@@ -14,4 +14,10 @@ public interface IComponentRepository
     Task AddAsync(Component component, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
     Task DeleteAsync(Component component, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Registers the entity as modified with the client-supplied RowVersion as the
+    /// original value, enabling the optimistic concurrency check on save.
+    /// </summary>
+    void MarkModified(Component component, Guid originalRowVersion);
 }

@@ -56,4 +56,17 @@ public class BoardRepository : IBoardRepository
         _context.Boards.Remove(board);
         return Task.CompletedTask;
     }
+
+    public void MarkModified(Board board, Guid originalRowVersion)
+    {
+        _context.Entry(board).Property(b => b.RowVersion).OriginalValue = originalRowVersion;
+    }
+
+    public async Task<bool> AllExistAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
+    {
+        var idList = ids.ToList();
+        var found = await _context.Boards
+            .CountAsync(b => idList.Contains(b.Id), cancellationToken);
+        return found == idList.Count;
+    }
 }

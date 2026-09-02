@@ -19,9 +19,28 @@ builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 builder.Services.AddScoped<IComponentRepository, ComponentRepository>();
 builder.Services.AddScoped<IOrderProductionService, OrderProductionService>();
 
+// API controllers with JSON options for the DTO contracts.
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
+
+// CORS for the Blazor WebAssembly client (separate host, cookie auth needs credentials).
+const string ClientCorsPolicy = "OrderHubClient";
+builder.Services.AddCors(options =>
+    options.AddPolicy(ClientCorsPolicy, policy => policy
+        .WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [])
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseCors(ClientCorsPolicy);
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -33,6 +52,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.Run();
 

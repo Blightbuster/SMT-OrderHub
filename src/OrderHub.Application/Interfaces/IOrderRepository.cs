@@ -25,4 +25,10 @@ public interface IOrderRepository
     Task AddAsync(Order order, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
     Task DeleteAsync(Order order, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Registers the entity as modified with the client-supplied RowVersion as the
+    /// original value, enabling the optimistic concurrency check on save.
+    /// </summary>
+    void MarkModified(Order order, Guid originalRowVersion);
 }

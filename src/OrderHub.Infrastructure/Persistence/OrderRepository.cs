@@ -59,4 +59,9 @@ public class OrderRepository : IOrderRepository
         _context.Orders.Remove(order);
         return Task.CompletedTask;
     }
+
+    public void MarkModified(Order order, Guid originalRowVersion)
+    {
+        _context.Entry(order).Property(o => o.RowVersion).OriginalValue = originalRowVersion;
+    }
 }
