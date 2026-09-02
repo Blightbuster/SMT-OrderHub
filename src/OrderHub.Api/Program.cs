@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using OrderHub.Application.Interfaces;
+using OrderHub.Application.ProductionExport;
 using OrderHub.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +12,12 @@ builder.Services.AddOpenApi();
 // Persistence: SQLite database (file path from configuration).
 builder.Services.AddDbContext<SmtDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("SmtDatabase")));
+
+// Repositories & application services.
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IBoardRepository, BoardRepository>();
+builder.Services.AddScoped<IComponentRepository, ComponentRepository>();
+builder.Services.AddScoped<IOrderProductionService, OrderProductionService>();
 
 var app = builder.Build();
 
