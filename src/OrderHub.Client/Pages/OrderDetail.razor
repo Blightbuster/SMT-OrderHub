@@ -1,0 +1,67 @@
+@page "/orders/{id:guid}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+<PageTitle>Order details — OrderHub</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-md-9 col-lg-7">
+        @if (_notFound)
+        {
+            <div class="alert alert-warning">This order no longer exists.</div>
+            <a class="btn btn-outline-secondary" href="orders">Back to list</a>
+        }
+        else if (_loading)
+        {
+            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+        }
+        else if (_order is not null)
+        {
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="h3 mb-0">@_order.Name</h1>
+                <a class="btn btn-outline-primary" href="@($"orders/{_order.Id}/edit")">Edit</a>
+            </div>
+
+            <p class="text-muted">@_order.Description</p>
+            <p class="small text-muted">Created @_order.OrderDate.ToString("yyyy-MM-dd HH:mm") UTC</p>
+
+            <h2 class="h5 mt-4">Boards (@_order.Boards.Count)</h2>
+            @if (_order.Boards.Count == 0)
+            {
+                <p class="text-muted small">No boards assigned yet.</p>
+            }
+            else
+            {
+                <table class="table table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th>Board</th>
+                            <th class="text-end">Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var board in _order.Boards)
+                        {
+                            <tr>
+                                <td><a href="@($"boards/{board.BoardId}")">@board.BoardName</a></td>
+                                <td class="text-end">@board.BoardQuantity</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            <hr />
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-success" @onclick="ExportAsync" disabled="@_exporting">
+                    @(_exporting ? "Preparing…" : "⬇ Export for production")
+                </button>
+                <span class="small text-muted">Downloads the production-line JSON file.</span>
+            </div>
+
+            @if (_exportError is not null)
+            {
+                <div class="alert alert-danger py-2 mt-3">@_exportError</div>
+            }
+        }
+    </div>
+</div>
