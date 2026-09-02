@@ -1,5 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>
+    <!-- Abstractions only: enables data annotations like [ConcurrencyCheck] without a full EF Core dependency -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="10.0.0" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
