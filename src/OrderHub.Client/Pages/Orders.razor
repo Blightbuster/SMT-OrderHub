@@ -50,7 +50,8 @@ else
                     <td class="text-end">
                         <a class="btn btn-sm btn-outline-secondary" href="@($"orders/{item.Id}")">Details</a>
                         <a class="btn btn-sm btn-outline-primary" href="@($"orders/{item.Id}/edit")">Edit</a>
-                        <button class="btn btn-sm btn-outline-danger" @onclick="@(e => ConfirmDeleteAsync(item))">Delete</button>
+                        <button class="btn btn-sm btn-outline-danger"
+                                @onclick="@(e => ConfirmDeleteAsync(item))">Delete</button>
                     </td>
                 </tr>
             }

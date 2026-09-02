@@ -76,7 +76,9 @@ public class BoardRepository : IBoardRepository
 
     public async Task<bool> AllExistAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
     {
-        var idList = ids.ToList();
+        // Distinct: a duplicated id in the request would make the count comparison
+        // fail even though every referenced entity exists.
+        var idList = ids.Distinct().ToList();
         var found = await _context.Boards
             .CountAsync(b => idList.Contains(b.Id), cancellationToken);
         return found == idList.Count;

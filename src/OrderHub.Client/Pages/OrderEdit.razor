@@ -32,12 +32,8 @@
                 </div>
 
                 <hr />
-                <AssignmentList Rows="_boardAssignments"
-                                Available="_availableBoards"
-                                Heading="Boards"
-                                ItemColumnHeader="Board"
-                                CountColumnHeader="Board quantity"
-                                SelectPlaceholder="Select board…"
+                <AssignmentList Rows="_boardAssignments" Available="_availableBoards" Heading="Boards"
+                                ItemColumnHeader="Board" CountColumnHeader="Board quantity" SelectPlaceholder="Select board…"
                                 OnChanged="StateChangedAsync" />
 
                 @if (_error is not null)

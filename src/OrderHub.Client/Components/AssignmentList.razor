@@ -38,7 +38,12 @@
         <option value="">@SelectPlaceholder</option>
         @foreach (var option in Available)
         {
-            <option value="@option.Id">@option.Name</option>
+            // Already-assigned items are disabled: the join tables use composite
+            // primary keys, so the same reference cannot be added twice.
+            var assigned = Rows.Any(r => r.ItemId == option.Id);
+            <option value="@option.Id" disabled="@assigned">
+                @(assigned ? $"{option.Name} (already added)" : option.Name)
+            </option>
         }
     </select>
     <button type="button" class="btn btn-outline-primary" @onclick="Add" disabled="@string.IsNullOrEmpty(_selectedId)">
@@ -68,6 +73,9 @@
     private async Task Add()
     {
         if (string.IsNullOrEmpty(_selectedId) || !Guid.TryParse(_selectedId, out var id)) return;
+
+        // Defensive double-check on the client: never add a duplicate row.
+        if (Rows.Any(r => r.ItemId == id)) return;
 
         var option = Available.FirstOrDefault(o => o.Id == id);
         if (option is null) return;

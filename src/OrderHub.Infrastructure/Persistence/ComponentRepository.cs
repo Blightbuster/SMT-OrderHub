@@ -41,7 +41,9 @@ public class ComponentRepository : IComponentRepository
 
     public async Task<bool> AllExistAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
     {
-        var idList = ids.ToList();
+        // Distinct: a duplicated id in the request would make the count comparison
+        // fail even though every referenced entity exists.
+        var idList = ids.Distinct().ToList();
         var found = await _context.Components
             .CountAsync(c => idList.Contains(c.Id), cancellationToken);
         return found == idList.Count;
