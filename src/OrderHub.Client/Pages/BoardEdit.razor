@@ -1,0 +1,67 @@
+@page "/boards/new"
+@page "/boards/{id:guid}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+<PageTitle>@(_isNew ? "New board" : "Edit board") — OrderHub</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-md-9 col-lg-7">
+        <h1 class="h3 mb-3">@(_isNew ? "New board" : "Edit board")</h1>
+
+        @if (_notFound)
+        {
+            <div class="alert alert-warning">This board no longer exists.</div>
+            <a class="btn btn-outline-secondary" href="boards">Back to list</a>
+        }
+        else if (_loading)
+        {
+            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+        }
+        else
+        {
+            <EditForm Model="_form" OnValidSubmit="SaveAsync">
+                <DataAnnotationsValidator />
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Name <span class="text-danger">*</span></label>
+                        <InputText @bind-Value="_form.Name" class="form-control" maxlength="200" required />
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Length (mm) <span class="text-danger">*</span></label>
+                        <InputNumber @bind-Value="_form.Length" class="form-control" min="0" step="0.1" required />
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Width (mm) <span class="text-danger">*</span></label>
+                        <InputNumber @bind-Value="_form.Width" class="form-control" min="0" step="0.1" required />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <InputTextArea @bind-Value="_form.Description" class="form-control" rows="2" />
+                </div>
+
+                <hr />
+                <AssignmentList Rows="_placements"
+                                Available="_availableComponents"
+                                Heading="Component placements"
+                                ItemColumnHeader="Component"
+                                CountColumnHeader="Placement count"
+                                SelectPlaceholder="Select component…"
+                                OnChanged="StateChangedAsync" />
+
+                @if (_error is not null)
+                {
+                    <div class="alert alert-danger py-2">@_error</div>
+                }
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary" disabled="@_saving">
+                        @(_saving ? "Saving…" : "Save")
+                    </button>
+                    <a class="btn btn-outline-secondary" href="boards">Cancel</a>
+                </div>
+            </EditForm>
+        }
+    </div>
+</div>

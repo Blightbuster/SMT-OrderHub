@@ -1,0 +1,86 @@
+@namespace OrderHub.Client.Components
+@using OrderHub.Client.ApiClient
+
+<label class="form-label fw-semibold">@Heading</label>
+
+<table class="table table-sm align-middle">
+    <thead>
+        <tr>
+            <th>@ItemColumnHeader</th>
+            <th style="width: 9rem;" class="text-center">@CountColumnHeader</th>
+            <th style="width: 3rem;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var (row, index) in Rows.Select((r, i) => (r, i)))
+        {
+            <tr>
+                <td>@row.Label</td>
+                <td>
+                    <InputNumber @bind-Value="row.Count" class="form-control form-control-sm text-center" min="1" />
+                </td>
+                <td class="text-end">
+                    <button type="button" class="btn btn-sm btn-outline-danger" @onclick="@(e => Remove(index))">×</button>
+                </td>
+            </tr>
+        }
+        @if (Rows.Count == 0)
+        {
+            <tr>
+                <td colspan="3" class="text-muted small">No assignments yet — pick one below.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="input-group input-group-sm mb-3" style="max-width: 26rem;">
+    <select class="form-select" @bind="_selectedId">
+        <option value="">@SelectPlaceholder</option>
+        @foreach (var option in Available)
+        {
+            <option value="@option.Id">@option.Name</option>
+        }
+    </select>
+    <button type="button" class="btn btn-outline-primary" @onclick="Add" disabled="@string.IsNullOrEmpty(_selectedId)">
+        Add
+    </button>
+</div>
+
+@code {
+    /// <summary>Assignable rows currently on the form.</summary>
+    [Parameter, EditorRequired]
+    public List<AssignmentRow> Rows { get; set; } = [];
+
+    /// <summary>Items that can still be added (all available minus already-assigned).</summary>
+    [Parameter, EditorRequired]
+    public IReadOnlyList<AvailableOption> Available { get; set; } = [];
+
+    [Parameter, EditorRequired]
+    public EventCallback OnChanged { get; set; }
+
+    [Parameter] public string Heading { get; set; } = "Assignments";
+    [Parameter] public string ItemColumnHeader { get; set; } = "Item";
+    [Parameter] public string CountColumnHeader { get; set; } = "Count";
+    [Parameter] public string SelectPlaceholder { get; set; } = "Select item…";
+
+    private string? _selectedId;
+
+    private async Task Add()
+    {
+        if (string.IsNullOrEmpty(_selectedId) || !Guid.TryParse(_selectedId, out var id)) return;
+
+        var option = Available.FirstOrDefault(o => o.Id == id);
+        if (option is null) return;
+
+        Rows.Add(new AssignmentRow { ItemId = option.Id, Label = option.Name, Count = 1 });
+        _selectedId = null;
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task Remove(int index)
+    {
+        if (index < 0 || index >= Rows.Count) return;
+        Rows.RemoveAt(index);
+        await OnChanged.InvokeAsync();
+    }
+}

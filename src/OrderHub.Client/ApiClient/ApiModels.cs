@@ -23,3 +23,6 @@ public sealed record BoardAssignmentDto(Guid BoardId, string BoardName, int Boar
 public sealed record CreateOrderRequest(string Name, string Description);
 public sealed record UpdateOrderRequest(Guid RowVersion, string Name, string Description, IReadOnlyList<BoardAssignmentRequest> Boards);
 public sealed record BoardAssignmentRequest(Guid BoardId, int BoardQuantity);
+
+/// <summary>Pick-list option for the assignment editor (id + display name + payload).</summary>
+public sealed record AvailableOption(Guid Id, string Name);

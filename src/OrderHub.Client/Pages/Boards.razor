@@ -3,5 +3,80 @@
 
 <PageTitle>Boards — OrderHub</PageTitle>
 
-<h1>Boards</h1>
-<p class="text-muted">TODO</p>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Boards</h1>
+    <a class="btn btn-primary" href="boards/new">+ New board</a>
+</div>
+
+<div class="input-group mb-3" style="max-width: 24rem;">
+    <input class="form-control" placeholder="Search by name…" value="@_searchTerm" @oninput="OnSearchInput" />
+    @if (!string.IsNullOrEmpty(_searchTerm))
+    {
+        <button class="btn btn-outline-secondary" @onclick="ClearSearch">×</button>
+    }
+</div>
+
+@if (_error is not null)
+{
+    <div class="alert alert-danger py-2">@_error</div>
+}
+
+@if (_loading)
+{
+    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+}
+else if (_items.Count == 0)
+{
+    <p class="text-muted">No boards found@(string.IsNullOrEmpty(_searchTerm) ? "." : $" matching \"{_searchTerm}\".")</p>
+}
+else
+{
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th class="text-end">Dimensions (mm)</th>
+                <th style="width: 10rem;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in _items)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td class="text-muted">@item.Description</td>
+                    <td class="text-end">@item.Length × @item.Width</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" href="@($"boards/{item.Id}")">Edit</a>
+                        <button class="btn btn-sm btn-outline-danger"
+                                @onclick="@(e => ConfirmDeleteAsync(item))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <Pager State="@_pager" OnChanged="LoadAsync" />
+}
+
+@if (_pendingDelete is not null)
+{
+    <div class="modal d-block" tabindex="-1" style="background: rgba(0,0,0,0.4);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete board</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Delete <strong>@_pendingDelete.Name</strong>? This cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" @onclick="CancelDelete">Cancel</button>
+                    <button class="btn btn-danger" @onclick="DeleteAsync" disabled="@_deleting">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
