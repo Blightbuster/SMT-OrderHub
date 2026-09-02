@@ -241,7 +241,7 @@ public class OrderHubApiClient : IOrderHubApiClient
             call.PostAsync("login?useCookies=true", new { email, password }, ct);
 
         public Task LogoutAsync(CancellationToken ct = default) =>
-            call.PostEmptyAsync("logout", ct);
+            call.PostEmptyAsync("api/auth/logout", ct);
 
         /// <summary>Returns the signed-in user's info, or null when not authenticated.</summary>
         public Task<UserInfoDto?> GetUserInfoAsync(CancellationToken ct = default) =>

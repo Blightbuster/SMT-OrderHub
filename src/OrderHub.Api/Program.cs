@@ -101,8 +101,18 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Built-in Identity endpoints: /register, /login, /logout (cookie-based), rate-limited.
+// Built-in Identity endpoints: /register, /login (cookie-based), rate-limited.
+// Note: MapIdentityApi's /logout targets the bearer-token flow; with cookie auth
+// we map sign-out explicitly via SignInManager below.
 app.MapIdentityApi<Microsoft.AspNetCore.Identity.IdentityUser>().RequireRateLimiting("auth");
+
+// Cookie-based logout (requires the auth cookie; invalidates it server-side).
+app.MapPost("/api/auth/logout", async (
+    Microsoft.AspNetCore.Identity.SignInManager<Microsoft.AspNetCore.Identity.IdentityUser> signInManager) =>
+{
+    await signInManager.SignOutAsync();
+    return Results.NoContent();
+}).RequireAuthorization();
 
 // Real-time hub: same cookie auth, CORS-enabled for the WASM client.
 app.MapHub<OrderHub.Api.RealTime.OrderHub>("/hubs/orders");

@@ -1,4 +1,9 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
+@inject OrderHub.Client.ApiClient.IOrderHubApiClient Api
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthState
+@inject NavigationManager Navigation
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -7,6 +12,15 @@
     <main>
         <div class="top-row px-4">
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <AuthorizeView>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="small text-muted"
+                          title="@context.User.Identity?.Name">@context.User.Identity?.Name</span>
+                    <button class="btn btn-sm btn-outline-secondary" @onclick="LogoutAsync" disabled="@_loggingOut">
+                        @(_loggingOut ? "Signing out…" : "Sign out")
+                    </button>
+                </div>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">
@@ -14,3 +28,25 @@
         </article>
     </main>
 </div>
+
+@code {
+    private bool _loggingOut;
+
+    private async Task LogoutAsync()
+    {
+        _loggingOut = true;
+        try
+        {
+            await Api.Auth.LogoutAsync();
+        }
+        catch
+        {
+            // Even if the API call fails, clear local state and return to login.
+        }
+        finally
+        {
+            ((OrderHub.Client.Auth.CookieAuthStateProvider)AuthState).NotifyStateChanged();
+            Navigation.NavigateTo("login");
+        }
+    }
+}
