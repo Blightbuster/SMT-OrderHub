@@ -1,0 +1,37 @@
+@page "/login"
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+
+<PageTitle>Sign in — OrderHub</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+        <h1 class="h3 mb-3">OrderHub</h1>
+
+        <div class="btn-group w-100 mb-3" role="group">
+            <button class="btn @(Mode == "login" ? "btn-primary" : "btn-outline-primary")"
+                    @onclick="@(e => SetMode("login"))">Sign in</button>
+            <button class="btn @(Mode == "register" ? "btn-primary" : "btn-outline-primary")"
+                    @onclick="@(e => SetMode("register"))">Register</button>
+        </div>
+
+        @if (_error is not null)
+        {
+            <div class="alert alert-danger py-2">@_error</div>
+        }
+
+        <EditForm Model="this" OnValidSubmit="SubmitAsync">
+            <DataAnnotationsValidator />
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <InputText @bind-Value="_email" class="form-control" type="email" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <InputText @bind-Value="_password" class="form-control" type="password" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100" disabled="@_busy">
+                @(_busy ? "Please wait…" : (Mode == "login" ? "Sign in" : "Create account"))
+            </button>
+        </EditForm>
+    </div>
+</div>

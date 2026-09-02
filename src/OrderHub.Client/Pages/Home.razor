@@ -1,7 +1,10 @@
-﻿@page "/"
+@page "/"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
 
-<PageTitle>Home</PageTitle>
+<PageTitle>OrderHub</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<div class="text-center py-5">
+    <h1 class="display-5">SMT OrderHub</h1>
+    <p class="lead">Manage production orders, boards, and components.</p>
+    <a class="btn btn-primary btn-lg" href="orders">Open Orders</a>
+</div>
