@@ -77,6 +77,9 @@ builder.Services.AddCors(options =>
         .AllowAnyMethod()
         .AllowCredentials()));
 
+// Real-time: SignalR for concurrency notifications.
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -100,6 +103,9 @@ app.UseAuthorization();
 
 // Built-in Identity endpoints: /register, /login, /logout (cookie-based), rate-limited.
 app.MapIdentityApi<Microsoft.AspNetCore.Identity.IdentityUser>().RequireRateLimiting("auth");
+
+// Real-time hub: same cookie auth, CORS-enabled for the WASM client.
+app.MapHub<OrderHub.Api.RealTime.OrderHub>("/hubs/orders");
 
 app.MapControllers();
 

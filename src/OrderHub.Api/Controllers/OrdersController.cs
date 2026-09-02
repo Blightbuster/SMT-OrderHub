@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using OrderHub.Api.RealTime;
 using OrderHub.Application.Dtos;
 using OrderHub.Application.Interfaces;
 using OrderHub.Application.ProductionExport;
@@ -17,15 +19,18 @@ public class OrdersController : ControllerBase
     private readonly IOrderRepository _repository;
     private readonly IBoardRepository _boardRepository;
     private readonly IOrderProductionService _productionService;
+    private readonly IHubContext<RealTime.OrderHub> _hubContext;
 
     public OrdersController(
         IOrderRepository repository,
         IBoardRepository boardRepository,
-        IOrderProductionService productionService)
+        IOrderProductionService productionService,
+        IHubContext<RealTime.OrderHub> hubContext)
     {
         _repository = repository;
         _boardRepository = boardRepository;
         _productionService = productionService;
+        _hubContext = hubContext;
     }
 
     [HttpGet]
@@ -115,6 +120,7 @@ public class OrdersController : ControllerBase
             return await ConflictWithCurrentState(id, cancellationToken);
         }
 
+        await BroadcastModificationAsync(order, cancellationToken);
         return NoContent();
     }
 
@@ -127,7 +133,28 @@ public class OrdersController : ControllerBase
         await _repository.DeleteAsync(order, cancellationToken);
         await _repository.SaveChangesAsync(cancellationToken);
 
+        await BroadcastDeletedAsync(id, User.Identity?.Name ?? "unknown", cancellationToken);
         return NoContent();
+    }
+
+    /// <summary>Notifies all watchers that this order was modified by the current user.</summary>
+    private async Task BroadcastModificationAsync(Order order, CancellationToken cancellationToken)
+    {
+        await _hubContext.Clients
+            .Group(RealTime.OrderHub.GroupNameFor(order.Id))
+            .SendAsync("OrderModifiedByAnotherUser", new OrderModifiedEvent(
+                order.Id,
+                order.Name,
+                order.RowVersion,
+                User.Identity?.Name ?? "unknown",
+                DateTimeOffset.UtcNow), cancellationToken);
+    }
+
+    private async Task BroadcastDeletedAsync(Guid orderId, string modifiedBy, CancellationToken cancellationToken)
+    {
+        await _hubContext.Clients
+            .Group(RealTime.OrderHub.GroupNameFor(orderId))
+            .SendAsync("OrderDeleted", new { orderId, modifiedBy, deletedAtUtc = DateTimeOffset.UtcNow }, cancellationToken);
     }
 
     private async Task<IActionResult> ConflictWithCurrentState(Guid id, CancellationToken cancellationToken)
