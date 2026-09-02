@@ -23,4 +23,10 @@ public interface IBoardRepository
     /// original value, enabling the optimistic concurrency check on save.
     /// </summary>
     void MarkModified(Board board, Guid originalRowVersion);
+
+    /// <summary>
+    /// Loads the current database state without change tracking — used to build
+    /// the HTTP 409 Conflict payload after a failed concurrent update.
+    /// </summary>
+    Task<Board?> GetCurrentStateAsync(Guid id, CancellationToken cancellationToken = default);
 }

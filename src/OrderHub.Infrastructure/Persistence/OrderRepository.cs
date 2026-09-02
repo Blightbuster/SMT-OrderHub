@@ -64,4 +64,17 @@ public class OrderRepository : IOrderRepository
     {
         _context.Entry(order).Property(o => o.RowVersion).OriginalValue = originalRowVersion;
     }
+
+    public async Task<Order?> GetCurrentStateAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        // Discard the tracked (attempted) state, then reload fresh from the database.
+        var entry = _context.ChangeTracker.Entries<Order>().FirstOrDefault(e => e.Entity.Id == id);
+        if (entry is not null)
+        {
+            entry.State = EntityState.Detached;
+        }
+
+        return await _context.Orders.AsNoTracking()
+            .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
+    }
 }

@@ -94,7 +94,7 @@ public class ComponentsController : ControllerBase
 
     private async Task<IActionResult> ConflictWithCurrentState(Guid id, CancellationToken cancellationToken)
     {
-        var current = await _repository.GetByIdAsync(id, cancellationToken);
+        var current = await _repository.GetCurrentStateAsync(id, cancellationToken);
         if (current is null) return NotFound();
 
         return Conflict(new ComponentResponse(current.Id, current.Name, current.Description, current.Quantity, current.RowVersion));

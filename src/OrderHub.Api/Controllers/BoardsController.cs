@@ -108,7 +108,7 @@ public class BoardsController : ControllerBase
 
     private async Task<IActionResult> ConflictWithCurrentState(Guid id, CancellationToken cancellationToken)
     {
-        var current = await _repository.GetDetailByIdAsync(id, cancellationToken);
+        var current = await _repository.GetCurrentStateAsync(id, cancellationToken);
         if (current is null) return NotFound();
 
         return Conflict(ToDetailResponse(current));

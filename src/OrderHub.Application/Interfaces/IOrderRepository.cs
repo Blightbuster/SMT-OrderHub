@@ -31,4 +31,10 @@ public interface IOrderRepository
     /// original value, enabling the optimistic concurrency check on save.
     /// </summary>
     void MarkModified(Order order, Guid originalRowVersion);
+
+    /// <summary>
+    /// Loads the current database state without change tracking — used to build
+    /// the HTTP 409 Conflict payload after a failed concurrent update.
+    /// </summary>
+    Task<Order?> GetCurrentStateAsync(Guid id, CancellationToken cancellationToken = default);
 }

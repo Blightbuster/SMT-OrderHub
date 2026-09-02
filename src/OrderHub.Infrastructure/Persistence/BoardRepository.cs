@@ -62,6 +62,18 @@ public class BoardRepository : IBoardRepository
         _context.Entry(board).Property(b => b.RowVersion).OriginalValue = originalRowVersion;
     }
 
+    public async Task<Board?> GetCurrentStateAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var entry = _context.ChangeTracker.Entries<Board>().FirstOrDefault(e => e.Entity.Id == id);
+        if (entry is not null)
+        {
+            entry.State = EntityState.Detached;
+        }
+
+        return await _context.Boards.AsNoTracking()
+            .FirstOrDefaultAsync(b => b.Id == id, cancellationToken);
+    }
+
     public async Task<bool> AllExistAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
     {
         var idList = ids.ToList();

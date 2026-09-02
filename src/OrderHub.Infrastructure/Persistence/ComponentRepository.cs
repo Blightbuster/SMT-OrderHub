@@ -63,4 +63,16 @@ public class ComponentRepository : IComponentRepository
     {
         _context.Entry(component).Property(c => c.RowVersion).OriginalValue = originalRowVersion;
     }
+
+    public async Task<Component?> GetCurrentStateAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var entry = _context.ChangeTracker.Entries<Component>().FirstOrDefault(e => e.Entity.Id == id);
+        if (entry is not null)
+        {
+            entry.State = EntityState.Detached;
+        }
+
+        return await _context.Components.AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+    }
 }

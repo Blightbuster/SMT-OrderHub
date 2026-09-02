@@ -1,6 +1,118 @@
 @OrderHub.Api_HostAddress = http://localhost:5053
 
-GET {{OrderHub.Api_HostAddress}}/weatherforecast/
+### ===== Components =====
+
+### List components (paged, searchable)
+GET {{OrderHub.Api_HostAddress}}/api/components?searchTerm=&page=1&pageSize=20
 Accept: application/json
 
 ###
+
+POST {{OrderHub.Api_HostAddress}}/api/components
+Content-Type: application/json
+
+{
+  "name": "Resistor 10k 0805",
+  "description": "SKU-R-10K-0805",
+  "quantity": 5000
+}
+
+###
+
+POST {{OrderHub.Api_HostAddress}}/api/components
+Content-Type: application/json
+
+{
+  "name": "STM32F407",
+  "description": "SKU-MCU-32F407",
+  "quantity": 250
+}
+
+###
+
+PUT {{OrderHub.Api_HostAddress}}/api/components/{id:guid}
+Content-Type: application/json
+
+{
+  "rowVersion": "00000000-0000-0000-0000-000000000000",
+  "name": "Resistor 10k 0805",
+  "description": "Updated SKU",
+  "quantity": 4200
+}
+
+###
+
+DELETE {{OrderHub.Api_HostAddress}}/api/components/{id:guid}
+
+### ===== Boards =====
+
+### List boards
+GET {{OrderHub.Api_HostAddress}}/api/boards?searchTerm=&page=1&pageSize=20
+Accept: application/json
+
+###
+
+POST {{OrderHub.Api_HostAddress}}/api/boards
+Content-Type: application/json
+
+{
+  "name": "MCU-Mainboard-v2",
+  "description": "Rev C",
+  "length": 160.5,
+  "width": 100.0
+}
+
+###
+
+PUT {{OrderHub.Api_HostAddress}}/api/boards/{id:guid}
+Content-Type: application/json
+
+{
+  "rowVersion": "00000000-0000-0000-0000-000000000000",
+  "name": "MCU-Mainboard-v2",
+  "description": "Rev D",
+  "length": 160.5,
+  "width": 100.0,
+  "components": [
+    { "componentId": "{componentId:guid}", "placementCount": 24 }
+  ]
+}
+
+###
+
+DELETE {{OrderHub.Api_HostAddress}}/api/boards/{id:guid}
+
+### ===== Orders =====
+
+### List orders
+GET {{OrderHub.Api_HostAddress}}/api/orders?searchTerm=&page=1&pageSize=20
+Accept: application/json
+
+###
+
+POST {{OrderHub.Api_HostAddress}}/api/orders
+Content-Type: application/json
+
+{
+  "name": "SMT-RUN-2026-001",
+  "description": "Batch parameters: reflow profile 3"
+}
+
+###
+
+PUT {{OrderHub.Api_HostAddress}}/api/orders/{id:guid}
+Content-Type: application/json
+
+{
+  "rowVersion": "00000000-0000-0000-0000-000000000000",
+  "name": "SMT-RUN-2026-001",
+  "description": "Updated batch parameters",
+  "boards": [
+    { "boardId": "{boardId:guid}", "boardQuantity": 5 }
+  ]
+}
+
+###
+
+### Production line JSON export (downloads a file)
+GET {{OrderHub.Api_HostAddress}}/api/orders/{id:guid}/export
