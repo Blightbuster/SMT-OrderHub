@@ -5,7 +5,7 @@ namespace OrderHub.Domain;
 /// <summary>
 /// A PCB board that can be produced across one or multiple orders.
 /// </summary>
-public class Board
+public class Board : IHasRowVersion
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 

@@ -5,7 +5,7 @@ namespace OrderHub.Domain;
 /// <summary>
 /// An SMT component that can be placed on one or multiple boards.
 /// </summary>
-public class Component
+public class Component : IHasRowVersion
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 

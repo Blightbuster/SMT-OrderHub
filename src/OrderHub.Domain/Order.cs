@@ -5,7 +5,7 @@ namespace OrderHub.Domain;
 /// <summary>
 /// A production order in the SMT manufacturing flow.
 /// </summary>
-public class Order
+public class Order : IHasRowVersion
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 

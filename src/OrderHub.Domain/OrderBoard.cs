@@ -6,7 +6,7 @@ namespace OrderHub.Domain;
 /// Join entity between <see cref="Order"/> and <see cref="Board"/>
 /// with the extended attribute for the quantity of boards per order.
 /// </summary>
-public class OrderBoard
+public class OrderBoard : IHasRowVersion
 {
     public Guid OrderId { get; set; }
     public Order Order { get; set; } = null!;

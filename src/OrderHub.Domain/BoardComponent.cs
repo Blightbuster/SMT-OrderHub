@@ -6,7 +6,7 @@ namespace OrderHub.Domain;
 /// Join entity between <see cref="Board"/> and <see cref="Component"/>
 /// with the extended attribute for the number of components placed per board.
 /// </summary>
-public class BoardComponent
+public class BoardComponent : IHasRowVersion
 {
     public Guid BoardId { get; set; }
     public Board Board { get; set; } = null!;
