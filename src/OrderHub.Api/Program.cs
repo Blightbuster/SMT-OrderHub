@@ -88,10 +88,15 @@ app.UseCors(ClientCorsPolicy);
 
 app.MapOpenApi();
 
-// Apply pending migrations at startup
-using var scope = app.Services.CreateScope();
-var db = scope.ServiceProvider.GetRequiredService<SmtDbContext>();
-db.Database.Migrate();
+// Apply pending migrations at startup — except when Testing: integration tests
+// bootstrap the schema themselves via EnsureCreated on a shared in-memory DB,
+// so Migrate() would collide with the existing tables.
+if (!app.Environment.IsEnvironment("Testing"))
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<SmtDbContext>();
+    db.Database.Migrate();
+}
 
 app.UseHttpsRedirection();
 app.UseRateLimiter();
