@@ -22,11 +22,12 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.Name = "OrderHub.Auth";
     options.Cookie.HttpOnly = true;
-    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None; // cross-origin WASM client
-    // Secure cookies in production; relaxed for local dev/test over plain HTTP.
-    options.Cookie.SecurePolicy = builder.Environment.IsProduction()
-        ? Microsoft.AspNetCore.Http.CookieSecurePolicy.Always
-        : Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest;
+    // SameSite=Lax: client and API live on the same site (localhost, different
+    // ports — SameSite ignores ports), so Lax cookies are sent on XHR/fetch.
+    // Real cross-site deployments (step 17, HTTPS domains) would need
+    // SameSite=None + Secure behind TLS termination instead.
+    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest;
     options.ExpireTimeSpan = TimeSpan.FromHours(8);
 });
 
