@@ -85,15 +85,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseCors(ClientCorsPolicy);
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
+app.MapOpenApi();
 
-    // Apply pending migrations automatically in development.
-    using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<SmtDbContext>();
-    db.Database.Migrate();
-}
+// Apply pending migrations at startup
+using var scope = app.Services.CreateScope();
+var db = scope.ServiceProvider.GetRequiredService<SmtDbContext>();
+db.Database.Migrate();
 
 app.UseHttpsRedirection();
 app.UseRateLimiter();
