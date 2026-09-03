@@ -1,7 +1,10 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@namespace OrderHub.Client.Layout
+@inject Microsoft.Extensions.Localization.IStringLocalizer<OrderHub.Client.Resources.SharedResource> T
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">OrderHub.Client</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+        <button title="@T["Nav_NavigationMenu"]" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
@@ -11,22 +14,22 @@
     <nav class="nav flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> @T["Nav_Home"]
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="orders">
-                <span class="bi bi-list-columns-reverse-nav-menu" aria-hidden="true"></span> Orders
+                <span class="bi bi-list-columns-reverse-nav-menu" aria-hidden="true"></span> @T["Nav_Orders"]
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="boards">
-                <span class="bi bi-motherboard-fill-nav-menu" aria-hidden="true"></span> Boards
+                <span class="bi bi-motherboard-fill-nav-menu" aria-hidden="true"></span> @T["Nav_Boards"]
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="components">
-                <span class="bi bi-cpu-fill-nav-menu" aria-hidden="true"></span> Components
+                <span class="bi bi-cpu-fill-nav-menu" aria-hidden="true"></span> @T["Nav_Components"]
             </NavLink>
         </div>
     </nav>

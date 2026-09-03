@@ -1,17 +1,18 @@
 @page "/components/new"
 @page "/components/{id:guid}"
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject IStringLocalizer<SharedResource> T
 
-<PageTitle>@(_isNew ? "New component" : "Edit component") — OrderHub</PageTitle>
+<PageTitle>@(_isNew ? T["ComponentEdit_NewTitle"] : T["ComponentEdit_EditTitle"])@T["OrderEdit_PageTitleSuffix"]</PageTitle>
 
 <div class="row justify-content-center">
     <div class="col-md-7 col-lg-5">
-        <h1 class="h3 mb-3">@(_isNew ? "New component" : "Edit component")</h1>
+        <h1 class="h3 mb-3">@(_isNew ? T["ComponentEdit_NewTitle"] : T["ComponentEdit_EditTitle"])</h1>
 
         @if (_notFound)
         {
-            <div class="alert alert-warning">This component no longer exists.</div>
-            <a class="btn btn-outline-secondary" href="components">Back to list</a>
+                <div class="alert alert-warning">@T["ComponentEdit_NotFound"]</div>
+                <a class="btn btn-outline-secondary" href="components">@T["Edit_BackToList"]</a>
         }
         else if (_loading)
         {
@@ -22,15 +23,15 @@
             <EditForm Model="_form" OnValidSubmit="SaveAsync">
                 <DataAnnotationsValidator />
                 <div class="mb-3">
-                    <label class="form-label">Name <span class="text-danger">*</span></label>
+                    <label class="form-label">@T["Edit_Name"] <span class="text-danger">@T["Edit_Required"]</span></label>
                     <InputText @bind-Value="_form.Name" class="form-control" maxlength="200" required />
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Description</label>
+                    <label class="form-label">@T["Edit_Description"]</label>
                     <InputTextArea @bind-Value="_form.Description" class="form-control" rows="3" />
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Quantity (stock / reel count)</label>
+                    <label class="form-label">@T["ComponentEdit_QuantityLabel"]</label>
                     <InputNumber @bind-Value="_form.Quantity" class="form-control" min="0" required />
                 </div>
 
@@ -41,9 +42,9 @@
 
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary" disabled="@_saving">
-                        @(_saving ? "Saving…" : "Save")
+                        @(_saving ? T["Edit_Saving"] : T["Edit_Save"])
                     </button>
-                    <a class="btn btn-outline-secondary" href="components">Cancel</a>
+                    <a class="btn btn-outline-secondary" href="components">@T["Edit_Cancel"]</a>
                 </div>
             </EditForm>
         }

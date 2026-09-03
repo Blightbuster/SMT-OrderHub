@@ -1,44 +1,45 @@
 @page "/orders/new"
 @page "/orders/{id:guid}/edit"
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject IStringLocalizer<SharedResource> T
 
-<PageTitle>@(_isNew ? "New order" : "Edit order") — OrderHub</PageTitle>
+<PageTitle>@(_isNew ? T["OrderEdit_NewTitle"] : T["OrderEdit_EditTitle"])@T["OrderEdit_PageTitleSuffix"]</PageTitle>
 
 <div class="row justify-content-center">
     <div class="col-md-9 col-lg-7">
-        <h1 class="h3 mb-3">@(_isNew ? "New order" : "Edit order")</h1>
+        <h1 class="h3 mb-3">@(_isNew ? T["OrderEdit_NewTitle"] : T["OrderEdit_EditTitle"])</h1>
 
         @* Real-time conflict banner: shown when another user modifies this order. *@
         @if (_conflict is not null)
         {
             <div class="alert alert-warning d-flex justify-content-between align-items-center">
                 <div>
-                    <strong>Concurrency conflict:</strong> this order was modified by
-                    <strong>@_conflict.ModifiedBy</strong> at @_conflict.ModifiedAtUtc.ToLocalTime().ToString("HH:mm:ss").
+                    <strong>@T["OrderEdit_ConflictBanner"]</strong> @T["OrderEdit_ConflictModifiedBy"]
+                    <strong>@_conflict.ModifiedBy</strong> @T["OrderEdit_ConflictAt"] @_conflict.ModifiedAtUtc.ToLocalTime().ToString("HH:mm:ss").
                     @if (_reviewing)
                     {
                         <div class="mt-2">
                             <table class="table table-sm table-bordered mb-2">
                                 <thead>
                                     <tr>
-                                        <th>Field</th>
-                                        <th>Your changes</th>
-                                        <th>Current database</th>
+                                        <th>@T["OrderEdit_Field"]</th>
+                                        <th>@T["OrderEdit_YourChanges"]</th>
+                                        <th>@T["OrderEdit_CurrentDatabase"]</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr class="@(_conflictState?.Name != _form.Name ? "table-warning" : "")">
-                                        <td>Name</td>
+                                        <td>@T["List_Name"]</td>
                                         <td>@_form.Name</td>
                                         <td>@_conflictState?.Name</td>
                                     </tr>
                                     <tr class="@(_conflictState?.Description != _form.Description ? "table-warning" : "")">
-                                        <td>Description</td>
+                                        <td>@T["List_Description"]</td>
                                         <td>@_form.Description</td>
                                         <td>@_conflictState?.Description</td>
                                     </tr>
                                     <tr class="@(_conflictBoardSummary != _conflictStateSummary ? "table-warning" : "")">
-                                        <td>Boards</td>
+                                        <td>@T["OrderEdit_Boards"]</td>
                                         <td>@_conflictBoardSummary</td>
                                         <td>@_conflictStateSummary</td>
                                     </tr>
@@ -50,19 +51,16 @@
                 <div class="d-flex flex-column gap-2 ms-3" style="min-width: 11rem;">
                     @if (_reviewing)
                     {
-                        <button class="btn btn-sm btn-danger" @onclick="DiscardAndReloadAsync">Discard &amp; reload</button>
+                        <button class="btn btn-sm btn-danger" @onclick="DiscardAndReloadAsync">@T["OrderEdit_DiscardReload"]</button>
                         <button class="btn btn-sm btn-outline-secondary" @onclick="OverwriteAnywayAsync"
-                                disabled="@_saving">Overwrite anyway</button>
-                        <button class="btn btn-sm btn-outline-secondary" @onclick="@(e => _reviewing = false)">Hide
-                            review</button>
+                                disabled="@_saving">@T["OrderEdit_OverwriteAnyway"]</button>
+                        <button class="btn btn-sm btn-outline-secondary" @onclick="@(e => _reviewing = false)">@T["OrderEdit_HideReview"]</button>
                         }
                     else
                         {
-                            <button class="btn btn-sm btn-outline-primary" @onclick="@(e => _reviewing = true)">Side-by-side
-                                review</button>
-                                <button class="btn btn-sm btn-outline-secondary" @onclick="DiscardAndReloadAsync">Discard &amp;
-                                    reload</button>
-                                    <button class="btn btn-sm btn-outline-secondary" @onclick="DismissConflict">Keep editing</button>
+                            <button class="btn btn-sm btn-outline-primary" @onclick="@(e => _reviewing = true)">@T["OrderEdit_SideBySideReview"]</button>
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="DiscardAndReloadAsync">@T["OrderEdit_DiscardReload"]</button>
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="DismissConflict">@T["OrderEdit_KeepEditing"]</button>
                                 }
                             </div>
                         </div>
@@ -70,8 +68,8 @@
 
                     @if (_notFound)
                     {
-                        <div class="alert alert-warning">This order no longer exists.</div>
-                        <a class="btn btn-outline-secondary" href="orders">Back to list</a>
+                        <div class="alert alert-warning">@T["OrderEdit_NotFound"]</div>
+                        <a class="btn btn-outline-secondary" href="orders">@T["Edit_BackToList"]</a>
                     }
                     else if (_loading)
                     {
@@ -83,17 +81,17 @@
                             <DataAnnotationsValidator />
 
                             <div class="mb-3">
-                                <label class="form-label">Name <span class="text-danger">*</span></label>
+                                <label class="form-label">@T["Edit_Name"] <span class="text-danger">@T["Edit_Required"]</span></label>
                                 <InputText @bind-Value="_form.Name" class="form-control" maxlength="200" required />
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Description</label>
+                                <label class="form-label">@T["Edit_Description"]</label>
                                 <InputTextArea @bind-Value="_form.Description" class="form-control" rows="2" />
                             </div>
 
                             <hr />
-                            <AssignmentList Rows="_boardAssignments" Available="_availableBoards" Heading="Boards"
-                                            ItemColumnHeader="Board" CountColumnHeader="Board quantity" SelectPlaceholder="Select board…"
+                            <AssignmentList Rows="_boardAssignments" Available="_availableBoards" Heading="@T["OrderEdit_Boards"]"
+                                            ItemColumnHeader="@T["OrderEdit_BoardColumn"]" CountColumnHeader="@T["OrderEdit_BoardQuantity"]" SelectPlaceholder="@T["OrderEdit_SelectBoard"]"
                                             OnChanged="StateChangedAsync" />
 
                             @if (_error is not null)
@@ -103,9 +101,9 @@
 
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary" disabled="@_saving">
-                                    @(_saving ? "Saving…" : "Save")
+                                    @(_saving ? T["Edit_Saving"] : T["Edit_Save"])
                                 </button>
-                                <a class="btn btn-outline-secondary" href="orders">Cancel</a>
+                                <a class="btn btn-outline-secondary" href="orders">@T["Edit_Cancel"]</a>
                             </div>
                         </EditForm>
                     }

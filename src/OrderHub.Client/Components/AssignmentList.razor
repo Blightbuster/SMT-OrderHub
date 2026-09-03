@@ -1,13 +1,14 @@
 @namespace OrderHub.Client.Components
 @using OrderHub.Client.ApiClient
+@inject Microsoft.Extensions.Localization.IStringLocalizer<OrderHub.Client.Resources.SharedResource> T
 
-<label class="form-label fw-semibold">@Heading</label>
+<label class="form-label fw-semibold">@HeadingText</label>
 
 <table class="table table-sm align-middle">
     <thead>
         <tr>
-            <th>@ItemColumnHeader</th>
-            <th style="width: 9rem;" class="text-center">@CountColumnHeader</th>
+            <th>@ItemColumnHeaderText</th>
+            <th style="width: 9rem;" class="text-center">@CountColumnHeaderText</th>
             <th style="width: 3rem;"></th>
         </tr>
     </thead>
@@ -27,7 +28,7 @@
         @if (Rows.Count == 0)
         {
             <tr>
-                <td colspan="3" class="text-muted small">No assignments yet — pick one below.</td>
+                <td colspan="3" class="text-muted small">@T["Assignments_Empty"]</td>
             </tr>
         }
     </tbody>
@@ -35,19 +36,19 @@
 
 <div class="input-group input-group-sm mb-3" style="max-width: 26rem;">
     <select class="form-select" @bind="_selectedId">
-        <option value="">@SelectPlaceholder</option>
+        <option value="">@SelectPlaceholderText</option>
         @foreach (var option in Available)
         {
             // Already-assigned items are disabled: the join tables use composite
             // primary keys, so the same reference cannot be added twice.
             var assigned = Rows.Any(r => r.ItemId == option.Id);
             <option value="@option.Id" disabled="@assigned">
-                @(assigned ? $"{option.Name} (already added)" : option.Name)
+                @(assigned ? T["Assignments_AlreadyAdded", option.Name].Value : option.Name)
             </option>
         }
     </select>
     <button type="button" class="btn btn-outline-primary" @onclick="Add" disabled="@string.IsNullOrEmpty(_selectedId)">
-        Add
+        @T["Assignments_Add"]
     </button>
 </div>
 
@@ -63,10 +64,16 @@
     [Parameter, EditorRequired]
     public EventCallback OnChanged { get; set; }
 
-    [Parameter] public string Heading { get; set; } = "Assignments";
-    [Parameter] public string ItemColumnHeader { get; set; } = "Item";
-    [Parameter] public string CountColumnHeader { get; set; } = "Count";
-    [Parameter] public string SelectPlaceholder { get; set; } = "Select item…";
+    private string HeadingFallback => T["Assignments_DefaultHeading"];
+    [Parameter] public string? Heading { get; set; }
+    [Parameter] public string? ItemColumnHeader { get; set; }
+    [Parameter] public string? CountColumnHeader { get; set; }
+    [Parameter] public string? SelectPlaceholder { get; set; }
+
+    private string HeadingText => Heading ?? HeadingFallback;
+    private string ItemColumnHeaderText => ItemColumnHeader ?? T["Assignments_DefaultItemColumn"];
+    private string CountColumnHeaderText => CountColumnHeader ?? T["Assignments_DefaultCountColumn"];
+    private string SelectPlaceholderText => SelectPlaceholder ?? T["Assignments_DefaultPlaceholder"];
 
     private string? _selectedId;
 

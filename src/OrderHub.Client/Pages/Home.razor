@@ -1,10 +1,11 @@
 @page "/"
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject IStringLocalizer<SharedResource> T
 
-<PageTitle>OrderHub</PageTitle>
+<PageTitle>@T["Home_Title"]</PageTitle>
 
 <div class="text-center py-5">
-    <h1 class="display-5">SMT OrderHub</h1>
-    <p class="lead">Manage production orders, boards, and components.</p>
-    <a class="btn btn-primary btn-lg" href="orders">Open Orders</a>
+    <h1 class="display-5">@T["Home_Heading"]</h1>
+    <p class="lead">@T["Home_Lead"]</p>
+    <a class="btn btn-primary btn-lg" href="orders">@T["Home_OpenOrders"]</a>
 </div>

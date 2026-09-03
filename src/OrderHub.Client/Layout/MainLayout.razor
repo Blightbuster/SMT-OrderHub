@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
+@inject Microsoft.Extensions.Localization.IStringLocalizer<OrderHub.Client.Resources.SharedResource> T
 @inject OrderHub.Client.ApiClient.IOrderHubApiClient Api
 @inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthState
 @inject NavigationManager Navigation
@@ -16,7 +17,7 @@
                     <span class="small text-muted"
                           title="@context.User.Identity?.Name">@context.User.Identity?.Name</span>
                     <button class="btn btn-sm btn-outline-secondary" @onclick="LogoutAsync" disabled="@_loggingOut">
-                        @(_loggingOut ? "Signing out…" : "Sign out")
+                        @(_loggingOut ? T["Layout_SigningOut"] : T["Layout_SignOut"])
                     </button>
                 </div>
             </AuthorizeView>

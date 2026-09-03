@@ -5,10 +5,22 @@ using OrderHub.Client;
 using OrderHub.Client.ApiClient;
 using OrderHub.Client.Auth;
 using OrderHub.Client.RealTime;
+using OrderHub.Client.Resources;
+using Microsoft.Extensions.Localization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+
+// Localization: English is the only shipped culture today. Adding a language is a
+// resource-file-only change: drop e.g. SharedResource.de.resx next to SharedResource.resx
+// and add the culture below. No Razor/code changes required.
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddSingleton(sp =>
+{
+    var factory = sp.GetRequiredService<IStringLocalizerFactory>();
+    return factory.Create(typeof(SharedResource));
+});
 
 // Typed API client: cookie credentials + CSRF header contract + API base address.
 builder.Services.AddScoped(sp =>

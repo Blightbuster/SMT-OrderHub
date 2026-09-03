@@ -1,15 +1,16 @@
 @page "/components"
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject IStringLocalizer<SharedResource> T
 
-<PageTitle>Components — OrderHub</PageTitle>
+<PageTitle>@T["Components_PageTitle"]</PageTitle>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">Components</h1>
-    <a class="btn btn-primary" href="components/new">+ New component</a>
+    <h1 class="h3 mb-0">@T["Components_Heading"]</h1>
+    <a class="btn btn-primary" href="components/new">@T["Components_New"]</a>
 </div>
 
 <div class="input-group mb-3" style="max-width: 24rem;">
-    <input class="form-control" placeholder="Search by name…" value="@_searchTerm" @oninput="OnSearchInput" />
+    <input class="form-control" placeholder="@T["List_SearchPlaceholder"]" value="@_searchTerm" @oninput="OnSearchInput" />
     @if (!string.IsNullOrEmpty(_searchTerm))
     {
         <button class="btn btn-outline-secondary" @onclick="ClearSearch">×</button>
@@ -27,16 +28,16 @@
 }
 else if (_items.Count == 0)
 {
-    <p class="text-muted">No components found@(string.IsNullOrEmpty(_searchTerm) ? "." : $" matching \"{_searchTerm}\".")</p>
+    <p class="text-muted">@T["Components_None"]@(string.IsNullOrEmpty(_searchTerm) ? T["List_NoResultsSuffix"] : T["List_MatchingSearch", _searchTerm])</p>
 }
 else
 {
     <table class="table table-hover align-middle">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th class="text-end">Quantity</th>
+                <th>@T["List_Name"]</th>
+                <th>@T["List_Description"]</th>
+                <th class="text-end">@T["Components_Quantity"]</th>
                 <th style="width: 10rem;"></th>
             </tr>
         </thead>
@@ -48,8 +49,8 @@ else
                     <td class="text-muted">@item.Description</td>
                     <td class="text-end">@item.Quantity</td>
                     <td class="text-end">
-                        <a class="btn btn-sm btn-outline-primary" href="@($"components/{item.Id}")">Edit</a>
-                        <button class="btn btn-sm btn-outline-danger" @onclick="@(e => ConfirmDeleteAsync(item))">Delete</button>
+                        <a class="btn btn-sm btn-outline-primary" href="@($"components/{item.Id}")">@T["List_Edit"]</a>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="@(e => ConfirmDeleteAsync(item))">@T["List_Delete"]</button>
                     </td>
                 </tr>
             }
@@ -65,15 +66,15 @@ else
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Delete component</h5>
+                    <h5 class="modal-title">@T["Components_DeleteTitle"]</h5>
                     <button type="button" class="btn-close" @onclick="CancelDelete"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Delete <strong>@_pendingDelete.Name</strong>? This cannot be undone.</p>
+                    <p>@T["List_DeleteConfirm", _pendingDelete.Name]</p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-outline-secondary" @onclick="CancelDelete">Cancel</button>
-                    <button class="btn btn-danger" @onclick="DeleteAsync" disabled="@_deleting">Delete</button>
+                    <button class="btn btn-outline-secondary" @onclick="CancelDelete">@T["List_Cancel"]</button>
+                    <button class="btn btn-danger" @onclick="DeleteAsync" disabled="@_deleting">@T["List_Delete"]</button>
                 </div>
             </div>
         </div>

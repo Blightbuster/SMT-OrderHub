@@ -1,0 +1,39 @@
+@namespace OrderHub.Client.Components
+@inject Microsoft.Extensions.Localization.IStringLocalizer<OrderHub.Client.Resources.SharedResource> T
+
+@* Language scaffold: English is the only culture shipped today. This stub shows where a
+   runtime culture selector plugs in. To add a language (e.g. German):
+     1. Create Resources/SharedResource.de.resx with translated strings.
+     2. Add "de" to SupportedCultures.All (Resources/SupportedCultures.cs).
+     3. Implement the switch in OnCultureChanged below (persist the preference, e.g.
+        localStorage, and re-render localizer-dependent components).
+   The resource lookup falls back to SharedResource.resx (English) automatically for any
+   culture without a matching satellite file — adding a language can never break the UI. *@
+
+@if (SupportedCultures.All.Length > 1)
+{
+    <select class="form-select form-select-sm" style="width: auto;" value="@GetCurrentCulture()"
+            @onchange="OnCultureChanged">
+        @foreach (var culture in SupportedCultures.All)
+        {
+            <option value="@culture">@culture</option>
+        }
+    </select>
+}
+
+@code {
+    private string GetCurrentCulture()
+    {
+        var browserCulture = System.Globalization.CultureInfo.CurrentUICulture.Name;
+        var available = SupportedCultures.All.Contains(browserCulture);
+        return available ? browserCulture : SupportedCultures.Default;
+    }
+
+    private Task OnCultureChanged(ChangeEventArgs e)
+    {
+        // Scaffold: with a single culture there is nothing to switch yet. When a second
+        // language is added, persist the choice (e.g. localStorage) and raise an event so
+        // localizer-dependent components re-render with the new culture.
+        return Task.CompletedTask;
+    }
+}

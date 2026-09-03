@@ -1,6 +1,7 @@
 @namespace OrderHub.Client.Components
+@inject Microsoft.Extensions.Localization.IStringLocalizer<OrderHub.Client.Resources.SharedResource> T
 <div class="d-flex align-items-center gap-3 mt-3">
-    <span class="text-muted small">@State.TotalCount item(s)</span>
+    <span class="text-muted small">@T["Pager_ItemsCount", State.TotalCount]</span>
 
     <nav aria-label="Pagination">
         <ul class="pagination pagination-sm mb-0">
@@ -33,7 +34,7 @@
         </nav>
 
         <div class="ms-auto d-flex align-items-center gap-1">
-            <label class="small text-muted" for="pageSize">Per page</label>
+            <label class="small text-muted" for="pageSize">@T["Pager_PerPage"]</label>
             <select id="pageSize" class="form-select form-select-sm" style="width: 5rem;" value="@State.PageSize"
                     @onchange="OnPageSizeChanged">
                 <option value="5">5</option>
