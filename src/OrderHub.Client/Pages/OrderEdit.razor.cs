@@ -161,7 +161,13 @@ public partial class OrderEdit : ComponentBase, IDisposable
         await SaveAsync();
     }
 
-    private Task StateChangedAsync() => Task.CompletedTask;
+    private Task StateChangedAsync()
+    {
+        // Called by AssignmentList when rows are added/removed/re-counted.
+        // Re-render so the conflict banner's side-by-side diff reflects the
+        // current form state immediately.
+        return InvokeAsync(StateHasChanged);
+    }
 
     private async Task SaveAsync()
     {

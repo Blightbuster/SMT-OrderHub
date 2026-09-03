@@ -89,7 +89,11 @@ public partial class BoardEdit : ComponentBase
         }
     }
 
-    private Task StateChangedAsync() => Task.CompletedTask;
+    private Task StateChangedAsync()
+    {
+        // Called by AssignmentList when rows are added/removed/re-counted.
+        return InvokeAsync(StateHasChanged);
+    }
 
     private async Task SaveAsync()
     {
