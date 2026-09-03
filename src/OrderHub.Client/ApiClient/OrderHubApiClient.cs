@@ -164,7 +164,47 @@ public class OrderHubApiClient : IOrderHubApiClient
                 return new ApiValidationException("The requested record no longer exists.");
             }
 
-            return new ApiValidationException($"API error {(int)response.StatusCode}: {body}");
+            // Plain-text conflict payloads (duplicate name etc.): { "error": "..." }
+            if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                return new ApiConflictException(TryExtractError(body)
+                    ?? "The change conflicts with the current data.");
+            }
+
+            var message = TryExtractError(body) ?? $"API error {(int)response.StatusCode} ({response.StatusCode}).";
+            return new ApiValidationException(message);
+        }
+
+        /// <summary>
+        /// Reads an `error` property from a JSON body, or the body itself when it
+        /// is not JSON. Returns null when nothing useful is present.
+        /// </summary>
+        private static string? TryExtractError(string body)
+        {
+            if (string.IsNullOrWhiteSpace(body)) return null;
+
+            try
+            {
+                using var doc = System.Text.Json.JsonDocument.Parse(body);
+                if (doc.RootElement.TryGetProperty("error", out var error)
+                    && error.ValueKind == System.Text.Json.JsonValueKind.String)
+                {
+                    return error.GetString();
+                }
+                // ASP.NET Core validation problem details: errors dict or title.
+                if (doc.RootElement.TryGetProperty("title", out var title)
+                    && title.ValueKind == System.Text.Json.JsonValueKind.String)
+                {
+                    return title.GetString();
+                }
+            }
+            catch (System.Text.Json.JsonException)
+            {
+                // Not JSON — show a trimmed plain-text body.
+                return body.Length > 300 ? body[..300] + "…" : body;
+            }
+
+            return null;
         }
     }
 

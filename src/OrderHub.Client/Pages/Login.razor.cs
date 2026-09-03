@@ -45,13 +45,13 @@ public partial class Login : ComponentBase
         {
             _error = ex.Message;
         }
-        catch (Exception ex) when (ex.Message.Contains("400"))
+        catch (Exception ex) when (ex.Message.Contains("400") || ex.Message.Contains("409"))
         {
-            _error = "Registration failed — check the password requirements (8+ chars, upper, lower, digit, symbol).";
+            _error = "Registration failed — check the password requirements (8+ chars, upper, lower, digit, symbol) or that the email is not already taken.";
         }
-        catch
+        catch (Exception ex)
         {
-            _error = "Invalid credentials or server unreachable.";
+            _error = ComponentEdit.FriendlyError(ex, "Invalid credentials or server unreachable.");
         }
         finally
         {

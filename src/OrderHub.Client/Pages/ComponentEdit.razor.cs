@@ -83,13 +83,35 @@ public partial class ComponentEdit : ComponentBase
 
             Navigation.NavigateTo("components");
         }
-        catch (Exception ex)
+        catch (ApiConflictException ex)
         {
             _error = ex.Message;
+        }
+        catch (ApiValidationException ex)
+        {
+            _error = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            _error = FriendlyError(ex, "Could not save the component.");
         }
         finally
         {
             _saving = false;
         }
+    }
+
+    /// <summary>Maps raw transport/unknown exceptions to a readable message.</summary>
+    internal static string FriendlyError(Exception ex, string fallback)
+    {
+        // WASM HttpClient surfaces connectivity problems as TypeError/HttpRequestException.
+        if (ex is HttpRequestException
+            || ex.Message.Contains("NetworkError", StringComparison.OrdinalIgnoreCase)
+            || ex.Message.Contains("Failed to fetch", StringComparison.OrdinalIgnoreCase)
+            || ex.Message.Contains("TypeError", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{fallback} The API could not be reached — is it running?";
+        }
+        return ex.Message.Length > 0 ? ex.Message : fallback;
     }
 }

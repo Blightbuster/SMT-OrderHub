@@ -15,3 +15,9 @@ public class ConcurrencyConflictException<TState>(TState currentState) : Excepti
 
 /// <summary>Thrown when the API returns a validation error (400/422).</summary>
 public class ApiValidationException(string message) : Exception(message);
+
+/// <summary>
+/// Thrown when the API rejects a write with 409 Conflict carrying a plain
+/// { error } body — e.g. a duplicate name violating a unique index.
+/// </summary>
+public class ApiConflictException(string message) : Exception(message);

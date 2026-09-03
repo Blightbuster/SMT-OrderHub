@@ -57,7 +57,14 @@ public class BoardsController : ControllerBase
         };
 
         await _repository.AddAsync(board, cancellationToken);
-        await _repository.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _repository.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex) when (ex.IsUniqueConstraintViolation())
+        {
+            return Conflict(new { error = $"A board named '{request.Name}' already exists." });
+        }
 
         var response = new BoardResponse(board.Id, board.Name, board.Description, board.Length, board.Width, board.RowVersion);
         return CreatedAtAction(nameof(GetById), new { id = board.Id }, response);
@@ -91,6 +98,10 @@ public class BoardsController : ControllerBase
         catch (DbUpdateConcurrencyException)
         {
             return await ConflictWithCurrentState(id, cancellationToken);
+        }
+        catch (DbUpdateException ex) when (ex.IsUniqueConstraintViolation())
+        {
+            return Conflict(new { error = $"A board named '{request.Name}' already exists." });
         }
 
         return NoContent();

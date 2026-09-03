@@ -87,7 +87,14 @@ public class OrdersController : ControllerBase
         };
 
         await _repository.AddAsync(order, cancellationToken);
-        await _repository.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _repository.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex) when (ex.IsUniqueConstraintViolation())
+        {
+            return Conflict(new { error = $"An order named '{request.Name}' already exists." });
+        }
 
         var response = new OrderResponse(order.Id, order.Name, order.Description, order.OrderDate, order.RowVersion);
         return CreatedAtAction(nameof(GetById), new { id = order.Id }, response);
@@ -118,6 +125,10 @@ public class OrdersController : ControllerBase
         catch (DbUpdateConcurrencyException)
         {
             return await ConflictWithCurrentState(id, cancellationToken);
+        }
+        catch (DbUpdateException ex) when (ex.IsUniqueConstraintViolation())
+        {
+            return Conflict(new { error = $"An order named '{request.Name}' already exists." });
         }
 
         await BroadcastModificationAsync(order, cancellationToken);

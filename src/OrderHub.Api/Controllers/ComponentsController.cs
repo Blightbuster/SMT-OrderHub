@@ -52,7 +52,14 @@ public class ComponentsController : ControllerBase
         };
 
         await _repository.AddAsync(component, cancellationToken);
-        await _repository.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _repository.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex) when (ex.IsUniqueConstraintViolation())
+        {
+            return Conflict(new { error = $"A component named '{request.Name}' already exists." });
+        }
 
         var response = new ComponentResponse(component.Id, component.Name, component.Description, component.Quantity, component.RowVersion);
         return CreatedAtAction(nameof(GetById), new { id = component.Id }, response);
@@ -77,6 +84,10 @@ public class ComponentsController : ControllerBase
         catch (DbUpdateConcurrencyException)
         {
             return await ConflictWithCurrentState(id, cancellationToken);
+        }
+        catch (DbUpdateException ex) when (ex.IsUniqueConstraintViolation())
+        {
+            return Conflict(new { error = $"A component named '{request.Name}' already exists." });
         }
 
         return NoContent();
