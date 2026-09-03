@@ -1,0 +1,26 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/OrderHub.Api/Dockerfile
+    ports:
+      - "5053:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__SmtDatabase: "Data Source=/data/orderhub.db"
+      Cors__AllowedOrigins: "http://localhost:5106"
+    volumes:
+      # Persist the SQLite database across container restarts.
+      - orderhub-data:/data
+
+  client:
+    build:
+      context: .
+      dockerfile: src/OrderHub.Client/Dockerfile
+    ports:
+      - "5106:80"
+    depends_on:
+      - api
+
+volumes:
+  orderhub-data:
