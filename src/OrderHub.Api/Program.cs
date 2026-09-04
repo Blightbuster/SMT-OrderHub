@@ -15,9 +15,6 @@ builder.Host.UseSerilog((context, loggerConfiguration) => loggerConfiguration
     .WriteTo.Console(
         outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}"));
 
-// Category logger for the CORS diagnostics below (flows through Serilog).
-var corsLog = Log.ForContext("SourceContext", "CORS");
-
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -90,15 +87,6 @@ var allowedOrigins = builder.Configuration
         .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
         ?? []);
 
-// Startup diagnostic: shows exactly which origins the policy resolved to.
-// If this list is empty or missing the client origin, every preflight is denied.
-corsLog.Information("CORS policy '{Policy}' resolved origins: [{Origins}]",
-    ClientCorsPolicy, string.Join(", ", allowedOrigins));
-
-corsLog.Information("Config sources — Cors:AllowedOrigins section type: {SectionValueKind}, raw value: {Raw}",
-    builder.Configuration.GetSection("Cors:AllowedOrigins").Value is null ? "array-or-null" : "string",
-    builder.Configuration["Cors:AllowedOrigins"] ?? "<null>");
-
 builder.Services.AddCors(options =>
     options.AddPolicy(ClientCorsPolicy, policy => policy
         .WithOrigins(allowedOrigins)
@@ -111,8 +99,16 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
-// Serilog request logging: one line per HTTP request with method, path, status
-// and duration. RequestLoggingPhase.Start/End keeps ordering deterministic.
+var corsLog = Log.ForContext("SourceContext", "CORS");
+
+corsLog.Information("CORS policy '{Policy}' resolved origins: [{Origins}]",
+    ClientCorsPolicy, string.Join(", ", allowedOrigins));
+
+corsLog.Information("Config sources — Cors:AllowedOrigins section type: {SectionValueKind}, raw value: {Raw}",
+    builder.Configuration.GetSection("Cors:AllowedOrigins").Value is null ? "array-or-null" : "string",
+    builder.Configuration["Cors:AllowedOrigins"] ?? "<null>");
+
+// Serilog request logging: one line per HTTP request with method, path, status and duration
 app.UseSerilogRequestLogging();
 
 // CORS diagnostics middleware: logs every request that carries an Origin header
