@@ -7,6 +7,7 @@ using OrderHub.Application.Dtos;
 using OrderHub.Application.Interfaces;
 using OrderHub.Application.ProductionExport;
 using OrderHub.Domain;
+using Serilog;
 
 namespace OrderHub.Api.Controllers;
 
@@ -16,6 +17,8 @@ namespace OrderHub.Api.Controllers;
 [Route("api/[controller]")]
 public class OrdersController : ControllerBase
 {
+    private static readonly Serilog.ILogger AuditLog = Log.ForContext<OrdersController>();
+
     private readonly IOrderRepository _repository;
     private readonly IBoardRepository _boardRepository;
     private readonly IOrderProductionService _productionService;
@@ -97,6 +100,10 @@ public class OrdersController : ControllerBase
         }
 
         var response = new OrderResponse(order.Id, order.Name, order.Description, order.OrderDate, order.RowVersion);
+
+        AuditLog.Information("Order {OrderId} ({OrderName}) created by {User}",
+            order.Id, order.Name, User.Identity?.Name ?? "anonymous");
+
         return CreatedAtAction(nameof(GetById), new { id = order.Id }, response);
     }
 
@@ -124,6 +131,8 @@ public class OrdersController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
+            AuditLog.Warning("Concurrency conflict updating order {OrderId} (client RowVersion stale) by {User}",
+                id, User.Identity?.Name ?? "anonymous");
             return await ConflictWithCurrentState(id, cancellationToken);
         }
         catch (DbUpdateException ex) when (ex.IsUniqueConstraintViolation())
@@ -132,6 +141,10 @@ public class OrdersController : ControllerBase
         }
 
         await BroadcastModificationAsync(order, cancellationToken);
+
+        AuditLog.Information("Order {OrderId} ({OrderName}) updated by {User}",
+            order.Id, order.Name, User.Identity?.Name ?? "anonymous");
+
         return NoContent();
     }
 
@@ -145,6 +158,10 @@ public class OrdersController : ControllerBase
         await _repository.SaveChangesAsync(cancellationToken);
 
         await BroadcastDeletedAsync(id, User.Identity?.Name ?? "unknown", cancellationToken);
+
+        AuditLog.Information("Order {OrderId} ({OrderName}) deleted by {User}",
+            order.Id, order.Name, User.Identity?.Name ?? "anonymous");
+
         return NoContent();
     }
 
