@@ -16,14 +16,24 @@ concurrency:
 
 env:
   REGISTRY: ghcr.io
-  API_IMAGE: ghcr.io/${{ github.repository }}/orderhub-api
-  CLIENT_IMAGE: ghcr.io/${{ github.repository }}/orderhub-client
 
 jobs:
   build-test-publish:
     name: Build, Test & Publish Images
     runs-on: ubuntu-latest
+    # GHCR requires lowercase image paths; "Blightbuster/SMT-OrderHub" is not.
+    outputs:
+      api_image: ${{ steps.image_names.outputs.api_image }}
+      client_image: ${{ steps.image_names.outputs.client_image }}
     steps:
+      - id: image_names
+        shell: bash
+        run: |
+          REPO_LOWER="${{ github.repository }}"
+          REPO_LOWER="${REPO_LOWER,,}"
+          echo "api_image=ghcr.io/${REPO_LOWER}/orderhub-api" >> "$GITHUB_OUTPUT"
+          echo "client_image=ghcr.io/${REPO_LOWER}/orderhub-client" >> "$GITHUB_OUTPUT"
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -75,8 +85,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ env.API_IMAGE }}
-            ${{ env.CLIENT_IMAGE }}
+            ${{ steps.image_names.outputs.api_image }}
+            ${{ steps.image_names.outputs.client_image }}
 
       - name: Build and push API image
         uses: docker/build-push-action@v6
@@ -84,7 +94,7 @@ jobs:
           context: .
           file: src/OrderHub.Api/Dockerfile
           push: true
-          tags: ${{ env.API_IMAGE }}:latest,${{ env.API_IMAGE }}:${{ github.sha }}
+          tags: ${{ steps.image_names.outputs.api_image }}:latest,${{ steps.image_names.outputs.api_image }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=api
           cache-to: type=gha,scope=api,mode=max
@@ -95,7 +105,7 @@ jobs:
           context: .
           file: src/OrderHub.Client/Dockerfile
           push: true
-          tags: ${{ env.CLIENT_IMAGE }}:latest,${{ env.CLIENT_IMAGE }}:${{ github.sha }}
+          tags: ${{ steps.image_names.outputs.client_image }}:latest,${{ steps.image_names.outputs.client_image }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=client
           cache-to: type=gha,scope=client,mode=max
@@ -113,7 +123,7 @@ jobs:
         with:
           app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: ${{ env.API_IMAGE }}:${{ github.sha }}
+          images: ${{ needs.build-test-publish.outputs.api_image }}:${{ github.sha }}
 
   deploy-client:
     name: Deploy Client to Azure App Service
@@ -128,4 +138,4 @@ jobs:
         with:
           app-name: ${{ vars.AZURE_CLIENT_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_CLIENT_WEBAPP_PUBLISH_PROFILE }}
-          images: ${{ env.CLIENT_IMAGE }}:${{ github.sha }}
+          images: ${{ needs.build-test-publish.outputs.client_image }}:${{ github.sha }}
