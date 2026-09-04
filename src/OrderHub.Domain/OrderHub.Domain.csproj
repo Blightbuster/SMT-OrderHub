@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <!-- Abstractions only: enables data annotations like [ConcurrencyCheck] without a full EF Core dependency -->
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="10.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="10.0.11" />
   </ItemGroup>
 
   <PropertyGroup>
