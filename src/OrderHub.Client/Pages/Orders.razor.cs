@@ -54,7 +54,11 @@ public partial class Orders : ComponentBase, IDisposable
         _debounceTimer.Elapsed += async (_, _) => await InvokeAsync(async () =>
         {
             _pager.Reset();
-            if (_searchTerm != _lastLoadedSearchTerm) await LoadAsync();
+            if (_searchTerm != _lastLoadedSearchTerm)
+            {
+                await LoadAsync();
+                StateHasChanged();
+            }
         });
         _debounceTimer.Start();
     }
