@@ -11,8 +11,8 @@
 
         @if (_notFound)
         {
-                <div class="alert alert-warning">@T["BoardEdit_NotFound"]</div>
-                <a class="btn btn-outline-secondary" href="boards">@T["Edit_BackToList"]</a>
+            <div class="alert alert-warning">@T["BoardEdit_NotFound"]</div>
+            <a class="btn btn-outline-secondary" href="boards">@T["Edit_BackToList"]</a>
         }
         else if (_loading)
         {
@@ -25,44 +25,44 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">@T["Edit_Name"] <span class="text-danger">@T["Edit_Required"]</span></label>
-                        <InputText @bind-Value="_form.Name" class="form-control" maxlength="200" required />
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">@T["BoardEdit_Length"] <span class="text-danger">@T["Edit_Required"]</span></label>
-                        <InputNumber @bind-Value="_form.Length" class="form-control" min="0" step="0.1" required />
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">@T["BoardEdit_Width"] <span class="text-danger">@T["Edit_Required"]</span></label>
-                        <InputNumber @bind-Value="_form.Width" class="form-control" min="0" step="0.1" required />
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">@T["Edit_Description"]</label>
-                    <InputTextArea @bind-Value="_form.Description" class="form-control" rows="2" />
-                </div>
+                        <label class="form-label">@T["Edit_Name"] <span
+                            class="text-danger">@T["Edit_Required"]</span></label>
+                            <InputText @bind-Value="_form.Name" class="form-control" maxlength="200" required />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">@T["BoardEdit_Length"] <span
+                                class="text-danger">@T["Edit_Required"]</span></label>
+                                <InputNumber @bind-Value="_form.Length" class="form-control" min="0" step="0.1" required />
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">@T["BoardEdit_Width"] <span
+                                    class="text-danger">@T["Edit_Required"]</span></label>
+                                    <InputNumber @bind-Value="_form.Width" class="form-control" min="0" step="0.1" required />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">@T["Edit_Description"]</label>
+                                <InputTextArea @bind-Value="_form.Description" class="form-control" rows="2" />
+                            </div>
 
-                <hr />
-                <AssignmentList Rows="_placements"
-                                Available="_availableComponents"
-                                Heading="@T["BoardEdit_PlacementsHeading"]"
-                                ItemColumnHeader="@T["BoardEdit_ComponentColumn"]"
-                                CountColumnHeader="@T["BoardEdit_PlacementCount"]"
-                                SelectPlaceholder="@T["BoardEdit_SelectComponent"]"
-                                OnChanged="StateChangedAsync" />
+                            <hr />
+                            <AssignmentList Rows="_placements" Available="_availableComponents"
+                                            Heading="@T["BoardEdit_PlacementsHeading"]" ItemColumnHeader="@T["BoardEdit_ComponentColumn"]"
+                                            CountColumnHeader="@T["BoardEdit_PlacementCount"]" SelectPlaceholder="@T["BoardEdit_SelectComponent"]"
+                                            RowHrefFactory="@(id => $"components/{id}")" OnChanged="StateChangedAsync" />
 
-                @if (_error is not null)
-                {
-                    <div class="alert alert-danger py-2">@_error</div>
-                }
+                            @if (_error is not null)
+                            {
+                                <div class="alert alert-danger py-2">@_error</div>
+                            }
 
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary" disabled="@_saving">
-                        @(_saving ? T["Edit_Saving"] : T["Edit_Save"])
-                    </button>
-                    <a class="btn btn-outline-secondary" href="boards">@T["Edit_Cancel"]</a>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary" disabled="@_saving">
+                                    @(_saving ? T["Edit_Saving"] : T["Edit_Save"])
+                                </button>
+                                <a class="btn btn-outline-secondary" href="boards">@T["Edit_Cancel"]</a>
+                            </div>
+                        </EditForm>
+                    }
                 </div>
-            </EditForm>
-        }
-    </div>
-</div>
+            </div>

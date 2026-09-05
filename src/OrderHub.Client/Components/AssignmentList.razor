@@ -16,7 +16,16 @@
         @foreach (var (row, index) in Rows.Select((r, i) => (r, i)))
         {
             <tr>
-                <td>@row.Label</td>
+                <td>
+                    @if (RowHrefFactory is not null)
+                    {
+                        <a href="@RowHrefFactory(row.ItemId)">@row.Label</a>
+                    }
+                    else
+                    {
+                        @row.Label
+                    }
+                </td>
                 <td>
                     <InputNumber @bind-Value="row.Count" class="form-control form-control-sm text-center" min="1" />
                 </td>
@@ -69,6 +78,13 @@
     [Parameter] public string? ItemColumnHeader { get; set; }
     [Parameter] public string? CountColumnHeader { get; set; }
     [Parameter] public string? SelectPlaceholder { get; set; }
+
+    /// <summary>
+    /// Optional: maps an assigned item's id to a navigation URL (e.g. the
+    /// component edit page). When set, row labels render as links so users can
+    /// jump from an assignment row straight to the referenced entity.
+    /// </summary>
+    [Parameter] public Func<Guid, string>? RowHrefFactory { get; set; }
 
     private string HeadingText => Heading ?? HeadingFallback;
     private string ItemColumnHeaderText => ItemColumnHeader ?? T["Assignments_DefaultItemColumn"];
