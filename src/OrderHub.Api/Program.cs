@@ -80,12 +80,12 @@ builder.Services.AddControllers(options =>
     });
 
 // CORS for the Blazor WebAssembly client (separate host, cookie auth needs credentials).
+// Origins are a simple comma-separated string
 const string ClientCorsPolicy = "OrderHubClient";
-var allowedOrigins = builder.Configuration
-    .GetSection("Cors:AllowedOrigins").Get<string[]>()
-    ?? (builder.Configuration["Cors:AllowedOrigins"]?
-        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-        ?? []);
+var allowedOrigins = (builder.Configuration["Cors:AllowedOrigins"] ?? "")
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    .Where(o => o.Length > 0)
+    .ToArray();
 
 builder.Services.AddCors(options =>
     options.AddPolicy(ClientCorsPolicy, policy => policy
