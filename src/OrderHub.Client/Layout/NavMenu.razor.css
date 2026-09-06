@@ -2,11 +2,6 @@
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.top-row {
-    min-height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
-}
-
 .navbar-brand {
     font-size: 1.1rem;
 }
@@ -65,6 +60,63 @@
     color: white;
 }
 
+/* Signed-in user block: pinned to the sidebar's bottom on desktop.
+   NOTE: display:flex is applied only when the menu is EXPANDED — an
+   unconditional rule would override Bootstrap's .collapse { display: none }
+   and keep the menu open on mobile. */
+.nav-scrollable:not(.collapse) {
+    display: flex;
+    flex-direction: column;
+}
+.nav-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+/* Avatar chip + email row. */
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    margin-bottom: 0.75rem;
+}
+
+.nav-user-avatar {
+    flex: 0 0 auto;
+    width: 1.9rem;
+    height: 1.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.18);
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.nav-user-name {
+    color: #e6e6e6;
+    font-size: 0.85rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nav-scrollable ::deep .nav-footer .btn {
+    white-space: nowrap;
+}
+
+/* Mobile: user block sits directly below the nav items (no pinning). */
+@media (max-width: 640.98px) {
+    .nav-footer {
+        margin-top: 0.5rem;
+    }
+}
+
 @media (min-width: 641px) {
     .navbar-toggler {
         display: none;
@@ -76,8 +128,16 @@
     }
 
     .nav-scrollable {
-        /* Allow sidebar to scroll for tall menus */
-        height: calc(100vh - 3.5rem);
+        /* Fill the sidebar height below the brand bar (flex: 1), scroll for
+           tall menus; flex column so the user block pins to the bottom. */
+        flex: 1 1 auto;
+        min-height: 0;
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .nav-footer {
+        margin-top: auto;
     }
 }
