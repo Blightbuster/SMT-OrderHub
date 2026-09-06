@@ -152,6 +152,9 @@
   <data name="List_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="List_Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
   <data name="List_DeleteConfirm" xml:space="preserve">
     <value>Delete {0}? This cannot be undone.</value>
   </data>
