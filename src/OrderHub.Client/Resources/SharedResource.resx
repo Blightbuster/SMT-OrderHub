@@ -98,6 +98,45 @@
   <data name="Home_OpenOrders" xml:space="preserve">
     <value>Open Orders</value>
   </data>
+  <data name="Home_FeaturesHeading" xml:space="preserve">
+    <value>What OrderHub offers</value>
+  </data>
+  <data name="Home_FeatureOrdersTitle" xml:space="preserve">
+    <value>Order management</value>
+  </data>
+  <data name="Home_FeatureOrdersText" xml:space="preserve">
+    <value>Create, edit and delete production orders and assign the boards each order produces.</value>
+  </data>
+  <data name="Home_FeatureBoardsTitle" xml:space="preserve">
+    <value>Board tracking</value>
+  </data>
+  <data name="Home_FeatureBoardsText" xml:space="preserve">
+    <value>Keep board definitions with dimensions and the component placements that go onto each board.</value>
+  </data>
+  <data name="Home_FeatureComponentsTitle" xml:space="preserve">
+    <value>Component inventory</value>
+  </data>
+  <data name="Home_FeatureComponentsText" xml:space="preserve">
+    <value>Maintain your SMD component catalog with stock quantities and package descriptions.</value>
+  </data>
+  <data name="Home_FeatureSearchTitle" xml:space="preserve">
+    <value>Search &amp; pagination</value>
+  </data>
+  <data name="Home_FeatureSearchText" xml:space="preserve">
+    <value>Server-side name search with paged results keeps every list fast, even with large datasets.</value>
+  </data>
+  <data name="Home_FeatureRealtimeTitle" xml:space="preserve">
+    <value>Real-time conflict detection</value>
+  </data>
+  <data name="Home_FeatureRealtimeText" xml:space="preserve">
+    <value>Editing an order? SignalR notifies you instantly when someone else modifies it — with a side-by-side review.</value>
+  </data>
+  <data name="Home_FeatureExportTitle" xml:space="preserve">
+    <value>Production export</value>
+  </data>
+  <data name="Home_FeatureExportText" xml:space="preserve">
+    <value>Download any order as a production-line-ready JSON file for the SMT line controller.</value>
+  </data>
   <!-- Login -->
   <data name="Login_PageTitle" xml:space="preserve">
     <value>Sign in — OrderHub</value>
