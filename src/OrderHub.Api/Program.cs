@@ -32,10 +32,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.Name = "OrderHub.Auth";
     options.Cookie.HttpOnly = true;
-    // SameSite=Lax: client and API live on the same site (localhost, different
-    // ports — SameSite ignores ports), so Lax cookies are sent on XHR/fetch.
-    // Real cross-site deployments (step 17, HTTPS domains) would need
-    // SameSite=None + Secure behind TLS termination instead.
     options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
     options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest;
     options.ExpireTimeSpan = TimeSpan.FromHours(8);

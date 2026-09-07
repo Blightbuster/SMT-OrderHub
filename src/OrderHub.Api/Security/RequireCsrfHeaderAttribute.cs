@@ -5,15 +5,17 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace OrderHub.Api.Security;
 
 /// <summary>
-/// CSRF protection for cookie-based authentication from a cross-origin SPA.
+/// CSRF defense-in-depth for cookie-based authentication.
 ///
-/// The auth cookie is SameSite=None (required for the Blazor WebAssembly client
-/// on a separate origin). CORS does NOT prevent cross-site *writes*: a malicious
-/// page can POST/PUT/DELETE with credentials included and simply cannot read the
-/// responses. State-changing verbs therefore require the custom header
-/// "X-Requested-With: OrderHub", which cannot be attached by a cross-site form
-/// or simple fetch without passing a CORS preflight — which attacker origins fail.
-/// Safe methods (GET) are exempt: they must remain side-effect free.
+/// In production, the client (orderhub.scheve.org) and API (api.orderhub.scheve.org)
+/// are same-site (sharing the scheve.org registrable domain) but cross-origin.
+/// Because they are same-site, SameSite=Lax allows the Blazor SPA to send the auth
+/// cookie on fetch/XHR with credentials.
+///
+/// Although CORS restricts cross-origin response reading, simple cross-site requests
+/// from other contexts could attempt mutating operations. Requiring the custom header
+/// "X-Requested-With: OrderHub" triggers a CORS preflight that unauthorized origins
+/// fail. Safe methods (GET, HEAD, OPTIONS) are exempt.
 /// </summary>
 public class RequireCsrfHeaderAttribute : Attribute, IAuthorizationFilter
 {
