@@ -19,6 +19,13 @@ services:
       dockerfile: src/OrderHub.Client/Dockerfile
     ports:
       - "5106:80"
+    volumes:
+      # Published Release builds run as WASM environment "Production" and load
+      # appsettings.Production.json (cloud API URL) on top of appsettings.json.
+      # For LOCAL compose we want the localhost API, so overwrite the Production
+      # file with the Development (localhost) appsettings. CI/CD images do NOT
+      # mount this and therefore use the real production URL.
+      - ./src/OrderHub.Client/wwwroot/appsettings.Development.json:/usr/share/nginx/html/appsettings.Production.json:ro
     depends_on:
       - api
 
