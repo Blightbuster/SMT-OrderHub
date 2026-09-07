@@ -7,6 +7,8 @@ using OrderHub.Client.Auth;
 using OrderHub.Client.RealTime;
 using OrderHub.Client.Resources;
 using Microsoft.Extensions.Localization;
+using System.Globalization;
+using Microsoft.JSInterop;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -34,4 +36,25 @@ builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthStateProvider>
 // Real-time concurrency notifications (one shared auto-reconnecting connection).
 builder.Services.AddSingleton<IOrderHubClient, OrderHubClient>();
 
-await builder.Build().RunAsync();
+var host = builder.Build();
+
+// Resolve the UI culture before anything renders: prefer the user's persisted
+// choice in localStorage, otherwise the browser language when supported,
+// otherwise the default.
+var js = host.Services.GetRequiredService<IJSRuntime>();
+var storedCulture = await js.InvokeAsync<string?>("localStorage.getItem", "appCulture");
+
+var cultureName =
+    !string.IsNullOrEmpty(storedCulture) && SupportedCultures.All.Contains(storedCulture)
+        ? storedCulture
+        : SupportedCultures.All.FirstOrDefault(c =>
+            CultureInfo.CurrentUICulture.Name.Equals(c, StringComparison.OrdinalIgnoreCase)
+            || CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.Equals(
+                c.Split('_')[0], StringComparison.OrdinalIgnoreCase))
+        ?? SupportedCultures.Default;
+
+var culture = new CultureInfo(cultureName);
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+await host.RunAsync();

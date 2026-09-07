@@ -1,39 +1,50 @@
 @namespace OrderHub.Client.Components
 @inject Microsoft.Extensions.Localization.IStringLocalizer<OrderHub.Client.Resources.SharedResource> T
+@inject IJSRuntime JS
+@inject NavigationManager Nav
 
-@* Language scaffold: English is the only culture shipped today. This stub shows where a
-   runtime culture selector plugs in. To add a language (e.g. German):
-     1. Create Resources/SharedResource.de.resx with translated strings.
-     2. Add "de" to SupportedCultures.All (Resources/SupportedCultures.cs).
-     3. Implement the switch in OnCultureChanged below (persist the preference, e.g.
-        localStorage, and re-render localizer-dependent components).
-   The resource lookup falls back to SharedResource.resx (English) automatically for any
-   culture without a matching satellite file — adding a language can never break the UI. *@
+@* Runtime culture selector. The choice is persisted in localStorage ("appCulture")
+   and the page is force-reloaded so Program.cs applies the culture before any
+   component renders. Resource lookup falls back to SharedResource.resx (English)
+   for any key missing in the selected satellite file. *@
 
 @if (SupportedCultures.All.Length > 1)
 {
-    <select class="form-select form-select-sm" style="width: auto;" value="@GetCurrentCulture()"
-            @onchange="OnCultureChanged">
-        @foreach (var culture in SupportedCultures.All)
-        {
-            <option value="@culture">@culture</option>
-        }
-    </select>
+    <div class="culture-select-wrap">
+        <span class="bi-globe" aria-hidden="true"></span>
+        <select class="culture-select" value="@GetCurrentCulture()" @onchange="OnCultureChanged"
+                aria-label="@T["Nav_CultureSelector"]">
+            @foreach (var culture in SupportedCultures.All)
+            {
+                <option value="@culture">@GetDisplayName(culture)</option>
+            }
+        </select>
+    </div>
 }
 
 @code {
     private string GetCurrentCulture()
     {
-        var browserCulture = System.Globalization.CultureInfo.CurrentUICulture.Name;
-        var available = SupportedCultures.All.Contains(browserCulture);
-        return available ? browserCulture : SupportedCultures.Default;
+        var current = System.Globalization.CultureInfo.CurrentUICulture.Name;
+        return SupportedCultures.All.Contains(current) ? current : SupportedCultures.Default;
     }
 
-    private Task OnCultureChanged(ChangeEventArgs e)
+    private static string GetDisplayName(string culture) => culture switch
     {
-        // Scaffold: with a single culture there is nothing to switch yet. When a second
-        // language is added, persist the choice (e.g. localStorage) and raise an event so
-        // localizer-dependent components re-render with the new culture.
-        return Task.CompletedTask;
+        "en" => "English",
+        "zh" => "7 Seas",
+        _ => culture,
+    };
+
+    private async Task OnCultureChanged(ChangeEventArgs e)
+    {
+        var culture = e.Value?.ToString();
+        if (string.IsNullOrEmpty(culture) || culture == GetCurrentCulture())
+        {
+            return;
+        }
+
+        await JS.InvokeVoidAsync("localStorage.setItem", "appCulture", culture);
+        Nav.NavigateTo(Nav.Uri, forceLoad: true);
     }
 }

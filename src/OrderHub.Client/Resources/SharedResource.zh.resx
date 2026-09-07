@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!--
+    Pirate Speak (en_7s) — Minecraft-style easter egg language.
+    All strings are playful pirate renditions of the English UI.
+    Missing keys fall back to SharedResource.resx (English) automatically.
+  -->
   <xsd:schema id="root"
     xmlns=""
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -21,6 +26,9 @@
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
               <xsd:attribute name="alias" type="xsd:string" />
               <xsd:attribute name="name" type="xsd:string" />
             </xsd:complexType>
@@ -62,31 +70,31 @@
   </resheader>
   <!-- Layout -->
   <data name="Nav_Home" xml:space="preserve">
-    <value>Home</value>
+    <value>Port</value>
   </data>
   <data name="Nav_Orders" xml:space="preserve">
-    <value>Orders</value>
+    <value>Voyages</value>
   </data>
   <data name="Nav_Boards" xml:space="preserve">
-    <value>Boards</value>
+    <value>Planks</value>
   </data>
   <data name="Nav_Components" xml:space="preserve">
-    <value>Components</value>
+    <value>Loot</value>
   </data>
   <data name="Nav_DevTools" xml:space="preserve">
-    <value>Dev Tools</value>
+    <value>Quartermaster's Chest</value>
   </data>
   <data name="Nav_NavigationMenu" xml:space="preserve">
-    <value>Navigation menu</value>
+    <value>Chart o' the seas</value>
   </data>
   <data name="Nav_CultureSelector" xml:space="preserve">
-    <value>Language</value>
+    <value>Tongue o' the crew</value>
   </data>
   <data name="Layout_SignOut" xml:space="preserve">
-    <value>Sign out</value>
+    <value>Abandon ship</value>
   </data>
   <data name="Layout_SigningOut" xml:space="preserve">
-    <value>Signing out…</value>
+    <value>Lowerin' the flag…</value>
   </data>
   <!-- Home -->
   <data name="Home_Title" xml:space="preserve">
@@ -96,183 +104,183 @@
     <value>SMT OrderHub</value>
   </data>
   <data name="Home_Lead" xml:space="preserve">
-    <value>Manage production orders, boards, and components.</value>
+    <value>Chart yer voyages, planks an' loot, ye scurvy dog!</value>
   </data>
   <data name="Home_OpenOrders" xml:space="preserve">
-    <value>Open Orders</value>
+    <value>Open Voyages</value>
   </data>
   <data name="Home_FeaturesHeading" xml:space="preserve">
-    <value>What OrderHub offers</value>
+    <value>What this vessel offers</value>
   </data>
   <data name="Home_FeatureOrdersTitle" xml:space="preserve">
-    <value>Order management</value>
+    <value>Voyage managin'</value>
   </data>
   <data name="Home_FeatureOrdersText" xml:space="preserve">
-    <value>Create, edit and delete production orders and assign the boards each order produces.</value>
+    <value>Chart, edit an' scuttle production voyages, an' assign the planks each voyage be buildin'.</value>
   </data>
   <data name="Home_FeatureBoardsTitle" xml:space="preserve">
-    <value>Board tracking</value>
+    <value>Plank trackin'</value>
   </data>
   <data name="Home_FeatureBoardsText" xml:space="preserve">
-    <value>Keep board definitions with dimensions and the component placements that go onto each board.</value>
+    <value>Keep yer plank blueprints with dimensions an' the loot placements nailed to each plank.</value>
   </data>
   <data name="Home_FeatureComponentsTitle" xml:space="preserve">
-    <value>Component inventory</value>
+    <value>Loot inventory</value>
   </data>
   <data name="Home_FeatureComponentsText" xml:space="preserve">
-    <value>Maintain your SMD component catalog with stock quantities and package descriptions.</value>
+    <value>Maintain yer treasure chest o' SMD loot with stock counts an' package scrolls.</value>
   </data>
   <data name="Home_FeatureSearchTitle" xml:space="preserve">
-    <value>Search &amp; pagination</value>
+    <value>Lookout &amp; paginatin'</value>
   </data>
   <data name="Home_FeatureSearchText" xml:space="preserve">
-    <value>Server-side name search with paged results keeps every list fast, even with large datasets.</value>
+    <value>Server-side name spyglass with paged results keeps every ledger swift, even with a whole armada o' records.</value>
   </data>
   <data name="Home_FeatureRealtimeTitle" xml:space="preserve">
-    <value>Real-time conflict detection</value>
+    <value>Real-time mutiny detection</value>
   </data>
   <data name="Home_FeatureRealtimeText" xml:space="preserve">
-    <value>Editing an order? SignalR notifies you instantly when someone else modifies it — with a side-by-side review.</value>
+    <value>Editin' a voyage? The parrot squawks the moment another buccaneer meddles with it — side-by-side, no less.</value>
   </data>
   <data name="Home_FeatureExportTitle" xml:space="preserve">
     <value>Production export</value>
   </data>
   <data name="Home_FeatureExportText" xml:space="preserve">
-    <value>Download any order as a production-line-ready JSON file for the SMT line controller.</value>
+    <value>Download any voyage as a treasure map (JSON) for the shipyard controller.</value>
   </data>
   <!-- Login -->
   <data name="Login_PageTitle" xml:space="preserve">
-    <value>Sign in — OrderHub</value>
+    <value>Come aboard — OrderHub</value>
   </data>
   <data name="Login_Heading" xml:space="preserve">
     <value>OrderHub</value>
   </data>
   <data name="Login_SignIn" xml:space="preserve">
-    <value>Sign in</value>
+    <value>Come aboard</value>
   </data>
   <data name="Login_Register" xml:space="preserve">
-    <value>Register</value>
+    <value>Join the crew</value>
   </data>
   <data name="Login_Email" xml:space="preserve">
-    <value>Email</value>
+    <value>Carrier pigeon</value>
   </data>
   <data name="Login_Password" xml:space="preserve">
-    <value>Password</value>
+    <value>Secret handshake</value>
   </data>
   <data name="Login_PleaseWait" xml:space="preserve">
-    <value>Please wait…</value>
+    <value>Hoistin' sails…</value>
   </data>
   <data name="Login_CreateAccount" xml:space="preserve">
-    <value>Create account</value>
+    <value>Sign the articles</value>
   </data>
   <!-- NotFound -->
   <data name="NotFound_Heading" xml:space="preserve">
-    <value>Not Found</value>
+    <value>Davy Jones' Locker</value>
   </data>
   <data name="NotFound_Message" xml:space="preserve">
-    <value>Sorry, the content you are looking for does not exist.</value>
+    <value>Arrr! There be no treasure at these coordinates.</value>
   </data>
   <!-- Shared list-page strings -->
   <data name="List_SearchPlaceholder" xml:space="preserve">
-    <value>Search by name…</value>
+    <value>Scour the ledger by name…</value>
   </data>
   <data name="List_Name" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="List_Description" xml:space="preserve">
-    <value>Description</value>
+    <value>Tale</value>
   </data>
   <data name="List_Edit" xml:space="preserve">
-    <value>Edit</value>
+    <value>Refit</value>
   </data>
   <data name="List_Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Scuttle</value>
   </data>
   <data name="List_Details" xml:space="preserve">
-    <value>Details</value>
+    <value>Charts</value>
   </data>
   <data name="List_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Belay that</value>
   </data>
   <data name="List_Actions" xml:space="preserve">
-    <value>Actions</value>
+    <value>Deeds</value>
   </data>
   <data name="List_DeleteConfirm" xml:space="preserve">
-    <value>Delete {0}? This cannot be undone.</value>
+    <value>Scuttle {0}? There be no turnin' back, matey.</value>
   </data>
   <data name="List_MatchingSearch" xml:space="preserve">
-    <value> matching "{0}".</value>
+    <value> matchin' "{0}".</value>
   </data>
   <data name="List_NoResultsSuffix" xml:space="preserve">
     <value>.</value>
   </data>
   <!-- Orders -->
   <data name="Orders_PageTitle" xml:space="preserve">
-    <value>Orders — OrderHub</value>
+    <value>Voyages — OrderHub</value>
   </data>
   <data name="Orders_Heading" xml:space="preserve">
-    <value>Orders</value>
+    <value>Voyages</value>
   </data>
   <data name="Orders_New" xml:space="preserve">
-    <value>+ New order</value>
+    <value>+ New voyage</value>
   </data>
   <data name="Orders_NoneFound" xml:space="preserve">
-    <value>No orders found</value>
+    <value>No voyages on the horizon</value>
   </data>
   <data name="Orders_OrderDate" xml:space="preserve">
-    <value>Order date</value>
+    <value>Date o' departure</value>
   </data>
   <data name="Orders_DeleteTitle" xml:space="preserve">
-    <value>Delete order</value>
+    <value>Scuttle voyage</value>
   </data>
   <!-- Boards -->
   <data name="Boards_PageTitle" xml:space="preserve">
-    <value>Boards — OrderHub</value>
+    <value>Planks — OrderHub</value>
   </data>
   <data name="Boards_Heading" xml:space="preserve">
-    <value>Boards</value>
+    <value>Planks</value>
   </data>
   <data name="Boards_New" xml:space="preserve">
-    <value>+ New board</value>
+    <value>+ New plank</value>
   </data>
   <data name="Boards_None" xml:space="preserve">
-    <value>No boards found</value>
+    <value>No planks in the hold</value>
   </data>
   <data name="Boards_Dimensions" xml:space="preserve">
-    <value>Dimensions (mm)</value>
+    <value>Measurements (mm)</value>
   </data>
   <data name="Boards_DeleteTitle" xml:space="preserve">
-    <value>Delete board</value>
+    <value>Scuttle plank</value>
   </data>
   <!-- Components -->
   <data name="Components_PageTitle" xml:space="preserve">
-    <value>Components — OrderHub</value>
+    <value>Loot — OrderHub</value>
   </data>
   <data name="Components_Heading" xml:space="preserve">
-    <value>Components</value>
+    <value>Loot</value>
   </data>
   <data name="Components_New" xml:space="preserve">
-    <value>+ New component</value>
+    <value>+ New loot</value>
   </data>
   <data name="Components_None" xml:space="preserve">
-    <value>No components found</value>
+    <value>The chest be empty</value>
   </data>
   <data name="Components_Quantity" xml:space="preserve">
-    <value>Quantity</value>
+    <value>Doubloons</value>
   </data>
   <data name="Components_DeleteTitle" xml:space="preserve">
-    <value>Delete component</value>
+    <value>Toss the loot overboard</value>
   </data>
   <!-- Pager -->
   <data name="Pager_ItemsCount" xml:space="preserve">
-    <value>{0} item(s)</value>
+    <value>{0} entry(ies) in the log</value>
   </data>
   <data name="Pager_PerPage" xml:space="preserve">
-    <value>Per page</value>
+    <value>Per page o' the ledger</value>
   </data>
   <!-- AssignmentList -->
   <data name="Assignments_DefaultHeading" xml:space="preserve">
-    <value>Assignments</value>
+    <value>Crew assignments</value>
   </data>
   <data name="Assignments_DefaultItemColumn" xml:space="preserve">
     <value>Item</value>
@@ -281,54 +289,54 @@
     <value>Count</value>
   </data>
   <data name="Assignments_DefaultPlaceholder" xml:space="preserve">
-    <value>Select item…</value>
+    <value>Pick yer item…</value>
   </data>
   <data name="Assignments_Empty" xml:space="preserve">
-    <value>No assignments yet — pick one below.</value>
+    <value>No crew signed yet — pick one below.</value>
   </data>
   <data name="Assignments_AlreadyAdded" xml:space="preserve">
-    <value>{0} (already added)</value>
+    <value>{0} (already aboard)</value>
   </data>
   <data name="Assignments_Add" xml:space="preserve">
-    <value>Add</value>
+    <value>Recruit</value>
   </data>
   <!-- Edit pages (shared) -->
   <data name="Edit_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Make it so</value>
   </data>
   <data name="Edit_Saving" xml:space="preserve">
-    <value>Saving…</value>
+    <value>Stowin' the loot…</value>
   </data>
   <data name="Edit_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Belay that</value>
   </data>
   <data name="Edit_BackToList" xml:space="preserve">
-    <value>Back to list</value>
+    <value>Back to the ledger</value>
   </data>
   <data name="Edit_Name" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="Edit_Description" xml:space="preserve">
-    <value>Description</value>
+    <value>Tale</value>
   </data>
   <data name="Edit_Required" xml:space="preserve">
     <value>*</value>
   </data>
   <!-- Order edit -->
   <data name="OrderEdit_NewTitle" xml:space="preserve">
-    <value>New order</value>
+    <value>New voyage</value>
   </data>
   <data name="OrderEdit_EditTitle" xml:space="preserve">
-    <value>Edit order</value>
+    <value>Refit voyage</value>
   </data>
   <data name="OrderEdit_PageTitleSuffix" xml:space="preserve">
     <value> — OrderHub</value>
   </data>
   <data name="OrderEdit_ConflictBanner" xml:space="preserve">
-    <value>Concurrency conflict:</value>
+    <value>Mutiny detected:</value>
   </data>
   <data name="OrderEdit_ConflictModifiedBy" xml:space="preserve">
-    <value>this order was modified by</value>
+    <value>this voyage was meddled with by</value>
   </data>
   <data name="OrderEdit_ConflictAt" xml:space="preserve">
     <value>at</value>
@@ -337,50 +345,50 @@
     <value>Field</value>
   </data>
   <data name="OrderEdit_YourChanges" xml:space="preserve">
-    <value>Your changes</value>
+    <value>Yer changes</value>
   </data>
   <data name="OrderEdit_CurrentDatabase" xml:space="preserve">
-    <value>Current database</value>
+    <value>The captain's ledger</value>
   </data>
   <data name="OrderEdit_Boards" xml:space="preserve">
-    <value>Boards</value>
+    <value>Planks</value>
   </data>
   <data name="OrderEdit_BoardColumn" xml:space="preserve">
-    <value>Board</value>
+    <value>Plank</value>
   </data>
   <data name="OrderEdit_BoardQuantity" xml:space="preserve">
-    <value>Board quantity</value>
+    <value>Plank count</value>
   </data>
   <data name="OrderEdit_SelectBoard" xml:space="preserve">
-    <value>Select board…</value>
+    <value>Pick a plank…</value>
   </data>
   <data name="OrderEdit_DiscardReload" xml:space="preserve">
-    <value>Discard &amp; reload</value>
+    <value>Toss &amp; reload</value>
   </data>
   <data name="OrderEdit_OverwriteAnyway" xml:space="preserve">
-    <value>Overwrite anyway</value>
+    <value>Plunder anyway</value>
   </data>
   <data name="OrderEdit_HideReview" xml:space="preserve">
-    <value>Hide review</value>
+    <value>Stow the review</value>
   </data>
   <data name="OrderEdit_SideBySideReview" xml:space="preserve">
-    <value>Side-by-side review</value>
+    <value>Side-by-side parley</value>
   </data>
   <data name="OrderEdit_KeepEditing" xml:space="preserve">
-    <value>Keep editing</value>
+    <value>Keep refittin'</value>
   </data>
   <data name="OrderEdit_NotFound" xml:space="preserve">
-    <value>This order no longer exists.</value>
+    <value>This voyage has sailed into legend.</value>
   </data>
   <!-- Board edit -->
   <data name="BoardEdit_NewTitle" xml:space="preserve">
-    <value>New board</value>
+    <value>New plank</value>
   </data>
   <data name="BoardEdit_EditTitle" xml:space="preserve">
-    <value>Edit board</value>
+    <value>Refit plank</value>
   </data>
   <data name="BoardEdit_NotFound" xml:space="preserve">
-    <value>This board no longer exists.</value>
+    <value>This plank be walkin' the plank.</value>
   </data>
   <data name="BoardEdit_Length" xml:space="preserve">
     <value>Length (mm)</value>
@@ -389,111 +397,111 @@
     <value>Width (mm)</value>
   </data>
   <data name="BoardEdit_PlacementsHeading" xml:space="preserve">
-    <value>Component placements</value>
+    <value>Loot placements</value>
   </data>
   <data name="BoardEdit_ComponentColumn" xml:space="preserve">
-    <value>Component</value>
+    <value>Loot</value>
   </data>
   <data name="BoardEdit_PlacementCount" xml:space="preserve">
-    <value>Placement count</value>
+    <value>Loot count</value>
   </data>
   <data name="BoardEdit_SelectComponent" xml:space="preserve">
-    <value>Select component…</value>
+    <value>Pick yer loot…</value>
   </data>
   <!-- Component edit -->
   <data name="ComponentEdit_NewTitle" xml:space="preserve">
-    <value>New component</value>
+    <value>New loot</value>
   </data>
   <data name="ComponentEdit_EditTitle" xml:space="preserve">
-    <value>Edit component</value>
+    <value>Refit loot</value>
   </data>
   <data name="ComponentEdit_NotFound" xml:space="preserve">
-    <value>This component no longer exists.</value>
+    <value>This loot be lost to Davy Jones.</value>
   </data>
   <data name="ComponentEdit_QuantityLabel" xml:space="preserve">
-    <value>Quantity (stock / reel count)</value>
+    <value>Doubloons (stock / reel count)</value>
   </data>
   <!-- Order detail -->
   <data name="OrderDetail_PageTitle" xml:space="preserve">
-    <value>Order details — OrderHub</value>
+    <value>Voyage charts — OrderHub</value>
   </data>
   <data name="OrderDetail_NotFound" xml:space="preserve">
-    <value>This order no longer exists.</value>
+    <value>This voyage has sailed into legend.</value>
   </data>
   <data name="OrderDetail_Created" xml:space="preserve">
-    <value>Created {0} UTC</value>
+    <value>Charted {0} UTC</value>
   </data>
   <data name="OrderDetail_BoardsHeading" xml:space="preserve">
-    <value>Boards ({0})</value>
+    <value>Planks ({0})</value>
   </data>
   <data name="OrderDetail_NoBoards" xml:space="preserve">
-    <value>No boards assigned yet.</value>
+    <value>No planks nailed down yet.</value>
   </data>
   <data name="OrderDetail_BoardColumn" xml:space="preserve">
-    <value>Board</value>
+    <value>Plank</value>
   </data>
   <data name="OrderDetail_Quantity" xml:space="preserve">
-    <value>Quantity</value>
+    <value>Count</value>
   </data>
   <data name="OrderDetail_Export" xml:space="preserve">
-    <value>⬇ Export for production</value>
+    <value>⬇ Send to the shipyard</value>
   </data>
   <data name="OrderDetail_Preparing" xml:space="preserve">
-    <value>Preparing…</value>
+    <value>Rollin' the map…</value>
   </data>
   <data name="OrderDetail_ExportHint" xml:space="preserve">
-    <value>Downloads the production-line JSON file.</value>
+    <value>Downloads the shipyard's treasure map (JSON).</value>
   </data>
   <!-- Dev tools -->
   <data name="DevTools_PageTitle" xml:space="preserve">
-    <value>Dev tools — OrderHub</value>
+    <value>Quartermaster's chest — OrderHub</value>
   </data>
   <data name="DevTools_Heading" xml:space="preserve">
-    <value>Developer tools</value>
+    <value>Quartermaster's tools</value>
   </data>
   <data name="DevTools_Intro" xml:space="preserve">
-    <value>Populate the database with realistic mock data for testing search, pagination and concurrency — or clear entities again. Boards use random component placements; orders use random board assignments. Deletion is permanent.</value>
+    <value>Fill the hold with mock cargo for testin' the spyglass, paginatin' an' mutiny detection — or toss it all overboard. Planks get random loot placements; voyages get random plank assignments. Once it's overboard, it be gone forever.</value>
   </data>
   <data name="DevTools_ComponentsTitle" xml:space="preserve">
-    <value>Components</value>
+    <value>Loot</value>
   </data>
   <data name="DevTools_ComponentsText" xml:space="preserve">
-    <value>Creates random SMD components (resistors, capacitors, LEDs …) with random stock quantities. Required before generating boards.</value>
+    <value>Creates random SMD loot (resistors, capacitors, blinkin' lights…) with random doubloon counts. Needed afore craftin' planks.</value>
   </data>
   <data name="DevTools_BoardsTitle" xml:space="preserve">
-    <value>Boards</value>
+    <value>Planks</value>
   </data>
   <data name="DevTools_BoardsText" xml:space="preserve">
-    <value>Creates PCB boards with 1–4 random component placements. Requires existing components.</value>
+    <value>Creates planks with 1–4 random loot placements. Needs loot in the hold first.</value>
   </data>
   <data name="DevTools_OrdersTitle" xml:space="preserve">
-    <value>Orders</value>
+    <value>Voyages</value>
   </data>
   <data name="DevTools_OrdersText" xml:space="preserve">
-    <value>Creates production orders for random customers with 1–3 board assignments. Requires existing boards.</value>
+    <value>Creates voyages for random merchants with 1–3 plank assignments. Needs planks in the hold first.</value>
   </data>
   <data name="DevTools_Count" xml:space="preserve">
-    <value>How many?</value>
+    <value>How many, matey?</value>
   </data>
   <data name="DevTools_Generate" xml:space="preserve">
-    <value>Generate</value>
+    <value>Hoist</value>
   </data>
   <data name="DevTools_Clear" xml:space="preserve">
-    <value>Clear all</value>
+    <value>Toss overboard</value>
   </data>
   <data name="DevTools_ClearAllTitle" xml:space="preserve">
     <value>Danger zone</value>
   </data>
   <data name="DevTools_ClearAllText" xml:space="preserve">
-    <value>Deletes ALL orders, boards and components from the database. This cannot be undone.</value>
+    <value>Scuttles ALL voyages, planks an' loot from the hold. There be no turnin' back.</value>
   </data>
   <data name="DevTools_ClearAll" xml:space="preserve">
-    <value>Clear entire database</value>
+    <value>Scuttle the whole hold</value>
   </data>
   <data name="DevTools_ClearAllConfirm" xml:space="preserve">
-    <value>Yes, delete everything</value>
+    <value>Aye, scuttle it all</value>
   </data>
   <data name="DevTools_LogTitle" xml:space="preserve">
-    <value>Log</value>
+    <value>Ship's log</value>
   </data>
 </root>

@@ -11,7 +11,7 @@ namespace OrderHub.Client.Resources;
 public static class SupportedCultures
 {
     /// <summary>Culture codes with a shipped SharedResource.&lt;code&gt;.resx.</summary>
-    public static readonly string[] All = ["en"];
+    public static readonly string[] All = ["en", "zh"];
 
     /// <summary>Default culture used when no user preference is known.</summary>
     public const string Default = "en";
