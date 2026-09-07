@@ -6,6 +6,8 @@ Surface-Mount Technology (SMT) manufacturing environment. It tracks
 those boards. It includes full CRUD, server-side search with pagination,
 real-time concurrency notifications, and a production-line export.
 
+[![Live demo](https://img.shields.io/badge/Live%20demo-orderhub.scheve.org-blue?logo=github)](https://orderhub.scheve.org/)
+
 ## What's inside
 
 The repository contains two deployable services:
