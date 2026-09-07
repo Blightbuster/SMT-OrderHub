@@ -165,6 +165,32 @@
   <data name="Login_CreateAccount" xml:space="preserve">
     <value>Create account</value>
   </data>
+  <!-- Client-side registration validation (localized; the API's English
+       Identity errors are only a rare fallback). -->
+  <data name="PasswordRule_Length" xml:space="preserve">
+    <value>At least 6 characters</value>
+  </data>
+  <data name="PasswordRule_Upper" xml:space="preserve">
+    <value>Contains an uppercase letter ('A'-'Z')</value>
+  </data>
+  <data name="PasswordRule_Lower" xml:space="preserve">
+    <value>Contains a lowercase letter ('a'-'z')</value>
+  </data>
+  <data name="PasswordRule_Digit" xml:space="preserve">
+    <value>Contains a digit ('0'-'9')</value>
+  </data>
+  <data name="PasswordRule_Special" xml:space="preserve">
+    <value>Contains a special character (e.g. !@#$%)</value>
+  </data>
+  <data name="Register_InvalidEmail" xml:space="preserve">
+    <value>Please enter a valid email address.</value>
+  </data>
+  <data name="Register_Failed" xml:space="preserve">
+    <value>Registration failed — check the password requirements or that the email is not already taken.</value>
+  </data>
+  <data name="Login_InvalidCredentials" xml:space="preserve">
+    <value>Invalid credentials or server unreachable.</value>
+  </data>
   <!-- NotFound -->
   <data name="NotFound_Heading" xml:space="preserve">
     <value>Not Found</value>

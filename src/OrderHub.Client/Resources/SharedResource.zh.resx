@@ -173,6 +173,31 @@
   <data name="Login_CreateAccount" xml:space="preserve">
     <value>Sign the articles</value>
   </data>
+  <!-- Client-side registration validation (pirate renditions). -->
+  <data name="PasswordRule_Length" xml:space="preserve">
+    <value>At least 6 marks long</value>
+  </data>
+  <data name="PasswordRule_Upper" xml:space="preserve">
+    <value>Needs a tall letter ('A'-'Z')</value>
+  </data>
+  <data name="PasswordRule_Lower" xml:space="preserve">
+    <value>Needs a small letter ('a'-'z')</value>
+  </data>
+  <data name="PasswordRule_Digit" xml:space="preserve">
+    <value>Needs a doubloon ('0'-'9')</value>
+  </data>
+  <data name="PasswordRule_Special" xml:space="preserve">
+    <value>Needs a cursed glyph (e.g. !@#$%)</value>
+  </data>
+  <data name="Register_InvalidEmail" xml:space="preserve">
+    <value>That carrier pigeon address be bogus, matey.</value>
+  </data>
+  <data name="Register_Failed" xml:space="preserve">
+    <value>Signin' failed — mind yer secret handshake rules, or the pigeon be already signed up.</value>
+  </data>
+  <data name="Login_InvalidCredentials" xml:space="preserve">
+    <value>Wrong credentials, or the ship be unreachable.</value>
+  </data>
   <!-- NotFound -->
   <data name="NotFound_Heading" xml:space="preserve">
     <value>Davy Jones' Locker</value>

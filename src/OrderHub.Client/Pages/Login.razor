@@ -28,7 +28,21 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">@T["Login_Password"]</label>
-                <InputText @bind-Value="_password" class="form-control" type="password" required />
+                @* Plain input with oninput: re-evaluate the rules on every
+                   keystroke so satisfied requirements turn green while typing. *@
+                <input class="form-control" type="password" required
+                       value="@_password" @oninput="OnPasswordInput" />
+                @if (Mode == "register")
+                {
+                    <ul class="list-unstyled small mt-2 mb-0">
+                        @foreach (var (label, met) in PasswordRules)
+                        {
+                            <li class="@(met ? "text-success" : "text-secondary")">
+                                <span aria-hidden="true">@(met ? "✓" : "○")</span> @label()
+                            </li>
+                        }
+                    </ul>
+                }
             </div>
             <button type="submit" class="btn btn-primary w-100" disabled="@_busy">
                 @(_busy ? T["Login_PleaseWait"] : (Mode == "login" ? T["Login_SignIn"] : T["Login_CreateAccount"]))
