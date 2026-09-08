@@ -7,6 +7,8 @@ those boards. It includes full CRUD, server-side search with pagination,
 real-time concurrency notifications, and a production-line export.
 
 [![Live demo](https://img.shields.io/badge/Live%20demo-orderhub.scheve.org-blue?logo=github)](https://orderhub.scheve.org/)
+[![Architecture](https://img.shields.io/badge/Architecture-docs/architecture--doc.md-orange?logo=readme)](docs/architecture-doc.md)
+[![OpenAPI](https://img.shields.io/badge/OpenAPI-api.orderhub.scheve.org%2Fopenapi%2Fv1.json-green?logo=swagger)](https://api.orderhub.scheve.org/openapi/v1.json)
 
 ## What's inside
 
