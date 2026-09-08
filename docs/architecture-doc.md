@@ -307,7 +307,7 @@ sequenceDiagram
     DB-->>API: 1 row affected (Success)
     API->>Hub: Broadcast EntityModifiedEvent(Id, NewRowVersion=V2, ModifiedBy="Alice")
     Hub-->>WASM_B: Receive EntityModifiedByAnotherUser
-    API-->>ClientA: 200 OK (RowVersion = V2)
+    API-->>ClientA: 204 No Content (RowVersion now V2)
 
     Note over ClientB: Bob tries to submit concurrent update
     ClientB->>API: PUT /api/orders/{id}<br/>(OriginalRowVersion = V1, Name = "Batch-B")
@@ -332,7 +332,7 @@ The Blazor WebAssembly frontend (`OrderHub.Client`) is designed around component
 
 - **`CookieAuthStateProvider`**: Inherits `AuthenticationStateProvider`, querying `/api/auth/manage/info` to maintain user claims and login state.
 - **`BrowserCredentialsHandler`**: Configured on `HttpClient` to ensure browser cookies (`OrderHub.Auth`) are attached to cross-origin requests (`Include` mode).
-- **`RequireCsrfHeaderAttribute` Support**: The client injects the `X-Requested-With: OrderHub` header on all HTTP requests to prevent unauthorized cross-site requests.
+- **`RequireCsrfHeaderAttribute` Support**: The client injects the `X-Requested-With: OrderHub` header on all mutating HTTP requests, and the API rejects writes without it. This works as CSRF defense because browsers cannot attach custom headers to classic cross-site form posts — only requests approved by the API's CORS policy (which passes the actual origin) can carry them.
 
 ### 6.2 Key UI Components & State
 
@@ -344,3 +344,21 @@ The Blazor WebAssembly frontend (`OrderHub.Client`) is designed around component
   - Supports `RowHrefFactory` for direct row navigation.
 - **Localization**:
   - Multi-language support (English + easter-egg culture) via `SharedResource.resx` and `CultureSelector.razor` (culture persisted in `localStorage`, applied at WASM startup).
+
+### 6.3 Edit Pages & Conflict Resolution UX
+
+Each entity has a create/edit page (`OrderEdit`, `BoardEdit`, `ComponentEdit`) that:
+
+- Round-trips the entity's `RowVersion` in a hidden form field for the optimistic concurrency check.
+- Subscribes to its entity's SignalR watch channel while editing and shows a non-blocking conflict banner the moment another user saves — including who modified the record and when.
+- Offers three resolution paths from the banner:
+  - **Side-by-side review**: a diff table (Field / Your changes / Current database) with changed rows highlighted; then _Discard & Reload_, or _Overwrite anyway_ (rebase onto the fresh `RowVersion` and save again, last-writer-wins).
+  - **Discard & reload** directly, dropping local edits.
+  - **Keep editing**, dismissing the banner (a save attempt will then surface the HTTP 409 flow as a fallback).
+
+---
+
+## 7. Testing & Deployment
+
+- **Tests** (`tests/OrderHub.Tests`): xUnit integration tests run the API in-memory via `WebApplicationFactory<Program>` against an in-memory SQLite database. Coverage includes REST CRUD + pagination, optimistic concurrency (stale `RowVersion` → 409 with current state), the SignalR broadcast on modification, production-export JSON structure, and EF Core token mechanics.
+- **Deployment**: both services ship as multi-stage Docker images orchestrated by `docker-compose.yml` (SQLite persisted on a volume); GitHub Actions CI builds/tests on every push, and CD deploys GHCR images to Azure App Service on `main`. See the repository `README.md` for environment variables and local run instructions.
