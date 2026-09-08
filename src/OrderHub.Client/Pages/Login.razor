@@ -30,8 +30,7 @@
                 <label class="form-label">@T["Login_Password"]</label>
                 @* Plain input with oninput: re-evaluate the rules on every
                    keystroke so satisfied requirements turn green while typing. *@
-                <input class="form-control" type="password" required
-                       value="@_password" @oninput="OnPasswordInput" />
+                <input class="form-control" type="password" required value="@_password" @oninput="OnPasswordInput" />
                 @if (Mode == "register")
                 {
                     <ul class="list-unstyled small mt-2 mb-0">
