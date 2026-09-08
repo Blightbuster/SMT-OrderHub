@@ -180,12 +180,6 @@ Persistence is handled by EF Core in `SmtDbContext`, inheriting from `IdentityDb
 
 ```mermaid
 erDiagram
-    AspNetUsers ||--o{ AspNetUserClaims : has
-    AspNetUsers ||--o{ AspNetUserLogins : has
-    AspNetUsers ||--o{ AspNetUserTokens : has
-    AspNetUsers ||--o{ AspNetUserRoles : assigned
-    AspNetRoles ||--o{ AspNetUserRoles : includes
-
     ORDERS ||--|{ ORDER_BOARDS : "has (Cascade Delete)"
     BOARDS ||--|{ ORDER_BOARDS : "referenced by (Cascade Delete)"
     BOARDS ||--|{ BOARD_COMPONENTS : "contains (Cascade Delete)"
