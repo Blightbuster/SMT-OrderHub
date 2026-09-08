@@ -354,7 +354,10 @@
     <value>Concurrency conflict:</value>
   </data>
   <data name="OrderEdit_ConflictModifiedBy" xml:space="preserve">
-    <value>this order was modified by</value>
+    <value>this record was modified by another user</value>
+  </data>
+  <data name="OrderEdit_ConflictAnotherUser" xml:space="preserve">
+    <value>another user</value>
   </data>
   <data name="OrderEdit_ConflictAt" xml:space="preserve">
     <value>at</value>

@@ -22,13 +22,13 @@ public class OrdersController : ControllerBase
     private readonly IOrderRepository _repository;
     private readonly IBoardRepository _boardRepository;
     private readonly IOrderProductionService _productionService;
-    private readonly IHubContext<RealTime.OrderHub> _hubContext;
+    private readonly IHubContext<RealTime.EntityHub> _hubContext;
 
     public OrdersController(
         IOrderRepository repository,
         IBoardRepository boardRepository,
         IOrderProductionService productionService,
-        IHubContext<RealTime.OrderHub> hubContext)
+        IHubContext<RealTime.EntityHub> hubContext)
     {
         _repository = repository;
         _boardRepository = boardRepository;
@@ -169,10 +169,9 @@ public class OrdersController : ControllerBase
     private async Task BroadcastModificationAsync(Order order, CancellationToken cancellationToken)
     {
         await _hubContext.Clients
-            .Group(RealTime.OrderHub.GroupNameFor(order.Id))
-            .SendAsync("OrderModifiedByAnotherUser", new OrderModifiedEvent(
+            .Group(RealTime.EntityHub.GroupNameForOrder(order.Id))
+            .SendAsync("EntityModifiedByAnotherUser", new RealTime.EntityHub.EntityModifiedEvent(
                 order.Id,
-                order.Name,
                 order.RowVersion,
                 User.Identity?.Name ?? "unknown",
                 DateTimeOffset.UtcNow), cancellationToken);
@@ -181,7 +180,7 @@ public class OrdersController : ControllerBase
     private async Task BroadcastDeletedAsync(Guid orderId, string modifiedBy, CancellationToken cancellationToken)
     {
         await _hubContext.Clients
-            .Group(RealTime.OrderHub.GroupNameFor(orderId))
+            .Group(RealTime.EntityHub.GroupNameForOrder(orderId))
             .SendAsync("OrderDeleted", new { orderId, modifiedBy, deletedAtUtc = DateTimeOffset.UtcNow }, cancellationToken);
     }
 

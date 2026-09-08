@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using OrderHub.Application.Dtos;
 using OrderHub.Application.Interfaces;
@@ -14,8 +15,13 @@ namespace OrderHub.Api.Controllers;
 public class ComponentsController : ControllerBase
 {
     private readonly IComponentRepository _repository;
+    private readonly IHubContext<RealTime.EntityHub> _hubContext;
 
-    public ComponentsController(IComponentRepository repository) => _repository = repository;
+    public ComponentsController(IComponentRepository repository, IHubContext<RealTime.EntityHub> hubContext)
+    {
+        _repository = repository;
+        _hubContext = hubContext;
+    }
 
     /// <summary>Paged, searchable component list.</summary>
     [HttpGet]
@@ -89,6 +95,11 @@ public class ComponentsController : ControllerBase
         {
             return Conflict(new { error = $"A component named '{request.Name}' already exists." });
         }
+
+        await _hubContext.Clients
+            .Group(RealTime.EntityHub.GroupNameForComponent(id))
+            .SendAsync("EntityModifiedByAnotherUser", new RealTime.EntityHub.EntityModifiedEvent(
+                id, component.RowVersion, User.Identity?.Name ?? "unknown", DateTimeOffset.UtcNow), cancellationToken);
 
         return NoContent();
     }

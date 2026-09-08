@@ -52,7 +52,8 @@ OrderHub.Domain (entities — referenced by all layers)
 - **API** exposes REST controllers, cookie-based auth via Identity, optimistic
   concurrency through RowVersion round-tripping, per-request CSRF header checks,
   rate limiting on auth endpoints, CORS for the WASM client, and a SignalR hub
-  (`/hubs/orders`) that notifies other users when an order is modified.
+  (`/hubs/orders`) that notifies other users when an order, board, or component
+  is modified.
 - **Client** is a Blazor WebAssembly SPA with server-side search + pagination,
   localization (resx), and real-time conflict banners driven by the SignalR hub.
 - **Logging** is centralized via Serilog (console sink; also visible in Azure Log Stream).

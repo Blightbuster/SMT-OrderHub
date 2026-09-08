@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using OrderHub.Application.Dtos;
 using OrderHub.Application.Interfaces;
@@ -15,11 +16,14 @@ public class BoardsController : ControllerBase
 {
     private readonly IBoardRepository _repository;
     private readonly IComponentRepository _componentRepository;
+    private readonly IHubContext<RealTime.EntityHub> _hubContext;
 
-    public BoardsController(IBoardRepository repository, IComponentRepository componentRepository)
+    public BoardsController(IBoardRepository repository, IComponentRepository componentRepository,
+        IHubContext<RealTime.EntityHub> hubContext)
     {
         _repository = repository;
         _componentRepository = componentRepository;
+        _hubContext = hubContext;
     }
 
     [HttpGet]
@@ -103,6 +107,11 @@ public class BoardsController : ControllerBase
         {
             return Conflict(new { error = $"A board named '{request.Name}' already exists." });
         }
+
+        await _hubContext.Clients
+            .Group(RealTime.EntityHub.GroupNameForBoard(id))
+            .SendAsync("EntityModifiedByAnotherUser", new RealTime.EntityHub.EntityModifiedEvent(
+                id, board.RowVersion, User.Identity?.Name ?? "unknown", DateTimeOffset.UtcNow), cancellationToken);
 
         return NoContent();
     }

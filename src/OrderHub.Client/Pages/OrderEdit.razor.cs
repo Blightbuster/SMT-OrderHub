@@ -34,7 +34,7 @@ public partial class OrderEdit : ComponentBase, IDisposable
     private List<AvailableOption> _availableBoards = [];
 
     // Real-time conflict state.
-    private OrderModifiedEvent? _conflict;
+    private EntityModifiedEvent? _conflict;
     private bool _reviewing;
     private OrderDetailDto? _conflictState;
 
@@ -88,8 +88,8 @@ public partial class OrderEdit : ComponentBase, IDisposable
 
             // Subscribe to real-time modifications of THIS order.
             await OrderHub.StartAsync();
-            OrderHub.Connection.Remove("OrderModifiedByAnotherUser");
-            OrderHub.Connection.On<OrderModifiedEvent>("OrderModifiedByAnotherUser", (evt) =>
+            OrderHub.Connection.Remove("EntityModifiedByAnotherUser");
+            OrderHub.Connection.On<EntityModifiedEvent>("EntityModifiedByAnotherUser", (evt) =>
             {
                 _ = HandleConflictAsync(evt);
                 return Task.CompletedTask;
@@ -108,9 +108,9 @@ public partial class OrderEdit : ComponentBase, IDisposable
 
     private void DismissConflict() => _conflict = null;
 
-    private async Task HandleConflictAsync(OrderModifiedEvent evt)
+    private async Task HandleConflictAsync(EntityModifiedEvent evt)
     {
-        if (evt.OrderId != Id.Value) return;
+        if (evt.Id != Id.Value) return;
         _conflict = evt;
         try
         {

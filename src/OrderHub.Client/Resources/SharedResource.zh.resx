@@ -361,7 +361,10 @@
     <value>Mutiny detected:</value>
   </data>
   <data name="OrderEdit_ConflictModifiedBy" xml:space="preserve">
-    <value>this voyage was meddled with by</value>
+    <value>this record was meddled with by another buccaneer</value>
+  </data>
+  <data name="OrderEdit_ConflictAnotherUser" xml:space="preserve">
+    <value>another buccaneer</value>
   </data>
   <data name="OrderEdit_ConflictAt" xml:space="preserve">
     <value>at</value>

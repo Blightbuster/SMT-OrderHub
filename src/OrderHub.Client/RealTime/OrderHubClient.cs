@@ -4,6 +4,16 @@ using Microsoft.AspNetCore.SignalR.Client;
 namespace OrderHub.Client.RealTime;
 
 /// <summary>
+/// Client mirror of the API's real-time payload broadcast when any entity
+/// (order, board or component) is modified by another user.
+/// </summary>
+public sealed record EntityModifiedEvent(
+    Guid Id,
+    Guid NewRowVersion,
+    string ModifiedBy,
+    DateTimeOffset ModifiedAtUtc);
+
+/// <summary>
 /// Shared SignalR connection for real-time concurrency notifications.
 /// One auto-reconnecting connection per app; components subscribe per-order
 /// handlers instead of managing their own connections.
@@ -20,6 +30,18 @@ public interface IOrderHubClient
 
     /// <summary>Leave the watch group (called when leaving the edit view).</summary>
     Task UnwatchOrderAsync(Guid orderId, CancellationToken cancellationToken = default);
+
+    /// <summary>Join the watch group for a specific board.</summary>
+    Task WatchBoardAsync(Guid boardId, CancellationToken cancellationToken = default);
+
+    /// <summary>Leave the board watch group (called when leaving the edit view).</summary>
+    Task UnwatchBoardAsync(Guid boardId, CancellationToken cancellationToken = default);
+
+    /// <summary>Join the watch group for a specific component.</summary>
+    Task WatchComponentAsync(Guid componentId, CancellationToken cancellationToken = default);
+
+    /// <summary>Leave the component watch group (called when leaving the edit view).</summary>
+    Task UnwatchComponentAsync(Guid componentId, CancellationToken cancellationToken = default);
 }
 
 public class OrderHubClient : IOrderHubClient
@@ -56,6 +78,18 @@ public class OrderHubClient : IOrderHubClient
 
     public Task UnwatchOrderAsync(Guid orderId, CancellationToken cancellationToken = default) =>
         _connection.InvokeAsync("UnwatchOrder", orderId, cancellationToken);
+
+    public Task WatchBoardAsync(Guid boardId, CancellationToken cancellationToken = default) =>
+        _connection.InvokeAsync("WatchBoard", boardId, cancellationToken);
+
+    public Task UnwatchBoardAsync(Guid boardId, CancellationToken cancellationToken = default) =>
+        _connection.InvokeAsync("UnwatchBoard", boardId, cancellationToken);
+
+    public Task WatchComponentAsync(Guid componentId, CancellationToken cancellationToken = default) =>
+        _connection.InvokeAsync("WatchComponent", componentId, cancellationToken);
+
+    public Task UnwatchComponentAsync(Guid componentId, CancellationToken cancellationToken = default) =>
+        _connection.InvokeAsync("UnwatchComponent", componentId, cancellationToken);
 
     public void Dispose() => _ = _connection.DisposeAsync().AsTask();
 }

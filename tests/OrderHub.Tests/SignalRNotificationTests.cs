@@ -13,7 +13,7 @@ namespace OrderHub.Tests;
 
 /// <summary>
 /// End-to-end SignalR test: two users watch the same order; user A modifies it
-/// via the REST API; user B receives the real-time OrderModifiedByAnotherUser event.
+/// via the REST API; user B receives the real-time EntityModifiedByAnotherUser event.
 /// </summary>
 public class SignalRNotificationTests : IDisposable
 {
@@ -55,7 +55,7 @@ public class SignalRNotificationTests : IDisposable
 
         // Both connections subscribe to the order channel.
         var received = new TaskCompletionSource<JsonElement>(TaskCreationOptions.RunContinuationsAsynchronously);
-        userB.Connection.On<JsonElement>("OrderModifiedByAnotherUser", e => received.TrySetResult(e));
+        userB.Connection.On<JsonElement>("EntityModifiedByAnotherUser", e => received.TrySetResult(e));
 
         await userA.Connection.StartAsync();
         await userB.Connection.StartAsync();
@@ -74,10 +74,10 @@ public class SignalRNotificationTests : IDisposable
 
         // ----- Assert: user B receives the broadcast -----
         var receivedTask = await Task.WhenAny(received.Task, Task.Delay(TimeSpan.FromSeconds(10)));
-        Assert.True(receivedTask == received.Task, "No OrderModifiedByAnotherUser event received within timeout.");
+        Assert.True(receivedTask == received.Task, "No EntityModifiedByAnotherUser event received within timeout.");
 
         var evt = received.Task.Result;
-        Assert.Equal(orderId, evt.GetProperty("orderId").GetGuid());
+        Assert.Equal(orderId, evt.GetProperty("id").GetGuid());
         // The broadcast must carry the NEW RowVersion (bumped on save), not the original.
         Assert.NotEqual(originalRowVersion, evt.GetProperty("newRowVersion").GetGuid());
         Assert.False(string.IsNullOrWhiteSpace(evt.GetProperty("modifiedBy").GetString()));

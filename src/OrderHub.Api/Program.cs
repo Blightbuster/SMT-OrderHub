@@ -161,7 +161,7 @@ app.MapPost("/api/auth/logout", async (
 }).RequireAuthorization();
 
 // Real-time hub: same cookie auth, CORS-enabled for the WASM client.
-app.MapHub<OrderHub.Api.RealTime.OrderHub>("/hubs/orders");
+app.MapHub<OrderHub.Api.RealTime.EntityHub>("/hubs/orders");
 
 app.MapControllers();
 

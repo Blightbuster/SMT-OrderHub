@@ -290,8 +290,8 @@ In an industrial SMT plant, multiple operators or production managers may view o
    - The API catches this exception, loads the current database record via `GetCurrentStateAsync(id)`, and responds with **`HTTP 409 Conflict`** including the fresh entity state.
 
 2. **Real-Time Event Propagation (Proactive Notification):**
-   - Upon successful database commits, API controllers broadcast an `OrderModifiedEvent` through SignalR (`IHubContext<OrderHub>`).
-   - Connected Blazor WASM clients receive notification in real-time, showing toast alerts or prompting immediate background refresh before the user attempts an outdated save.
+   - Upon successful database commits, API controllers broadcast a unified `EntityModifiedEvent` (id, new RowVersion, modified-by user, timestamp) through SignalR (`IHubContext<EntityHub>`).
+   - Clients subscribe per entity (`WatchOrder` / `WatchBoard` / `WatchComponent` on the `/hubs/orders` hub) while editing; connected Blazor WASM clients receive notifications in real-time and can open a side-by-side conflict review before attempting an outdated save.
 
 ```mermaid
 sequenceDiagram
@@ -299,7 +299,7 @@ sequenceDiagram
     actor ClientA as Operator Alice (Client A)
     actor ClientB as Operator Bob (Client B)
     participant WASM_B as Bob's Client (WASM)
-    participant Hub as SignalR OrderHub
+    participant Hub as SignalR EntityHub
     participant API as OrdersController
     participant Repo as OrderRepository
     participant DB as SQLite DB (SmtDbContext)
@@ -311,8 +311,8 @@ sequenceDiagram
     API->>DB: SaveChangesAsync()
     Note over DB: Check RowVersion == V1 (MATCH)<br/>Bump RowVersion -> V2
     DB-->>API: 1 row affected (Success)
-    API->>Hub: Broadcast OrderModifiedEvent(Id, Action="Updated", RowVersion=V2)
-    Hub-->>WASM_B: Receive OrderModifiedEvent
+    API->>Hub: Broadcast EntityModifiedEvent(Id, NewRowVersion=V2, ModifiedBy="Alice")
+    Hub-->>WASM_B: Receive EntityModifiedByAnotherUser
     API-->>ClientA: 200 OK (RowVersion = V2)
 
     Note over ClientB: Bob tries to submit concurrent update
@@ -349,4 +349,4 @@ The Blazor WebAssembly frontend (`OrderHub.Client`) is designed around component
   - Reusable pick-list component managing many-to-many child assignments (Orders $\leftrightarrow$ Boards and Boards $\leftrightarrow$ Components).
   - Supports `RowHrefFactory` for direct row navigation.
 - **Localization**:
-  - Multi-language support (English/German) via `SharedResource.resx` and `CultureSelector.razor`.
+  - Multi-language support (English + easter-egg culture) via `SharedResource.resx` and `CultureSelector.razor` (culture persisted in `localStorage`, applied at WASM startup).
