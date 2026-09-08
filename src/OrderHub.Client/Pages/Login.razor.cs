@@ -75,7 +75,7 @@ public partial class Login : ComponentBase
 
             await Api.Auth.LoginAsync(_email, _password);
             ((Auth.CookieAuthStateProvider)AuthState).NotifyStateChanged();
-            Navigation.NavigateTo("orders");
+            Navigation.NavigateTo("");
         }
         catch (ApiValidationException ex)
         {
