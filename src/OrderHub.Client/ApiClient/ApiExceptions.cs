@@ -21,3 +21,9 @@ public class ApiValidationException(string message) : Exception(message);
 /// { error } body — e.g. a duplicate name violating a unique index.
 /// </summary>
 public class ApiConflictException(string message) : Exception(message);
+
+/// <summary>
+/// Thrown when a sign-in attempt is rejected (401) — i.e. wrong email or
+/// password. Distinct from session expiry so the UI can show the right hint.
+/// </summary>
+public class InvalidCredentialsException() : Exception("Invalid email or password.");

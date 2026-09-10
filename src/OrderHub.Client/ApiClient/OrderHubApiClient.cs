@@ -100,6 +100,17 @@ public class OrderHubApiClient : IOrderHubApiClient
             await EnsureSuccessAsync(response);
         }
 
+        /// <summary>POST that maps a 401 to InvalidCredentialsException (login flow).</summary>
+        public async Task PostAuthAsync(string url, object request, CancellationToken ct)
+        {
+            using var response = await http.PostAsJsonAsync(url, request, JsonOptions, ct);
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new InvalidCredentialsException();
+            }
+            await EnsureSuccessAsync(response);
+        }
+
         public async Task PostEmptyAsync(string url, CancellationToken ct)
         {
             using var response = await http.PostAsync(url, content: null, ct);
@@ -278,7 +289,7 @@ public class OrderHubApiClient : IOrderHubApiClient
             call.PostAsync("register", new { email, password }, ct);
 
         public Task LoginAsync(string email, string password, CancellationToken ct = default) =>
-            call.PostAsync("login?useCookies=true", new { email, password }, ct);
+            call.PostAuthAsync("login?useCookies=true", new { email, password }, ct);
 
         public Task LogoutAsync(CancellationToken ct = default) =>
             call.PostEmptyAsync("api/auth/logout", ct);

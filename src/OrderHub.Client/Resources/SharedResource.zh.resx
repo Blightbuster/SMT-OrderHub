@@ -198,6 +198,9 @@
   <data name="Login_InvalidCredentials" xml:space="preserve">
     <value>Wrong credentials, or the ship be unreachable.</value>
   </data>
+  <data name="Login_WrongCredentials" xml:space="preserve">
+    <value>That be no known pigeon an' handshake pair, matey.</value>
+  </data>
   <!-- NotFound -->
   <data name="NotFound_Heading" xml:space="preserve">
     <value>Davy Jones' Locker</value>

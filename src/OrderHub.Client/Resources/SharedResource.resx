@@ -191,6 +191,9 @@
   <data name="Login_InvalidCredentials" xml:space="preserve">
     <value>Invalid credentials or server unreachable.</value>
   </data>
+  <data name="Login_WrongCredentials" xml:space="preserve">
+    <value>Invalid email or password.</value>
+  </data>
   <!-- NotFound -->
   <data name="NotFound_Heading" xml:space="preserve">
     <value>Not Found</value>

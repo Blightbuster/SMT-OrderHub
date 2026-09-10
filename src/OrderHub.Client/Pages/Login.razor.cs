@@ -77,6 +77,10 @@ public partial class Login : ComponentBase
             ((Auth.CookieAuthStateProvider)AuthState).NotifyStateChanged();
             Navigation.NavigateTo("");
         }
+        catch (InvalidCredentialsException)
+        {
+            _error = T["Login_WrongCredentials"];
+        }
         catch (ApiValidationException ex)
         {
             _error = ex.Message;
